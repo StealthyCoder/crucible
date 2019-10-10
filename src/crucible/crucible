@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+CRUCIBLE_VERSION=0.1.0
+
+function get_uuid {
+	grep 'id' .crucible | cut -d'=' -f 2
+}
+
+
+function generate_uuid {
+	local uuid
+	uuid="$(head -c 1K </dev/urandom | sha256sum -bz | cut -d' ' -f1 | tr -dc '[:print:]')"
+	echo "$uuid"
+}
+
+function get_shared_dir {
+ if [ -z "$XDG_DATA_HOME" ]
+ then
+	echo "$HOME/.local/share"
+ else
+	echo "$XDG_DATA_HOME"
+ fi
+}
+
+function create_local_crucible {
+	{ 	echo "id=$1"; 
+		echo "working_dir=$(pwd)"; 
+		echo "version=$CRUCIBLE_VERSION"; 
+	} >> .crucible
+}
+
+function create_shared_crucible {
+	local share_dir
+	share_dir="$(get_shared_dir)"
+	if [ ! -d "$share_dir/$1" ]
+	then
+		mkdir "$share_dir/crucible/$1" -p
+	fi
+	cp .crucible "$share_dir/crucible/$1/.crucible"
+}
+
+function init {
+	if [ ! -f .crucible ]
+	then
+		UUID="$(generate_uuid)"
+		create_local_crucible "$UUID"
+		create_shared_crucible "$UUID"
+	fi
+}
+
+function update {
+	local UUID
+	UUID="$(get_uuid)"
+	rm .crucible
+	create_local_crucible "$UUID"
+	create_shared_crucible "$UUID"
+}
+
+case $1 in
+	init)
+		init
+		;;
+	update)
+		update
+		;;
+	*)
+		echo "Unsupported command $1"
+		;;
+esac
