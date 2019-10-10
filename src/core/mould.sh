@@ -26,4 +26,5 @@ function require {
     else
         wget -q -O "$shared_location$1" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
     fi
+    source "$shared_location$1"
 }
