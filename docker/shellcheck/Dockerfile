@@ -7,7 +7,7 @@ RUN apt update && \
 RUN echo '#!/usr/bin/env bash\n\
 for f in $(ls /srv/crucible/**/*)\n\
 do\n\
-if [ -f $f ]; then shellcheck $f; fi\n\
+if [ -f $f ]; then shellcheck $f -x; fi\n\
 done\n\
 ' >> /var/run/startup.sh
 
