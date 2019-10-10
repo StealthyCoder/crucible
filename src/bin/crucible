@@ -21,9 +21,35 @@ function get_shared_dir {
  fi
 }
 
+# shellcheck disable=SC2016
+function generate_mould {
+	{
+		echo 'function require { ';
+		echo 'local local_crucible_version shared_crucible_version shared_location';
+		echo 'local_crucible_version="$(grep '"'version'"' .crucible | cut -d'"'='"' -f 2)"';
+		echo 'shared_crucible_version="$( grep '"'version'"' $(grep '"'shared_dir'"' .crucible | cut -d'"'='"' -f 2)/.crucible | cut -d'"'='"' -f 2)"';
+		echo 'if [ "$local_crucible_version" != "$shared_crucible_version" ]; then echo "Versions out of sync. Please run crucible update."; exit 1; fi';
+		echo 'if [ -z "$1" ]; then echo "Module to require has to be specified."; exit 1; fi';
+		echo 'shared_location="$(grep '"'shared_dir'"' .crucible | cut -d'"'='"' -f 2)/"';
+		echo 'if [ -f "$shared_location$1" ]';
+		echo 'then';
+		echo 'local module_version';
+		echo 'module_version="$(grep '"'CRUCIBLE_VERSION'"' "$shared_location$1" | cut -d'"'='"' -f 2 )"';
+		echo 'if [ "$module_version" != "$local_crucible_version" ]; then echo "Get other module version"; fi';
+		echo 'else';
+		echo 'echo "Getting module $1"';
+		echo 'fi';
+		echo '}';
+	} >> .mould
+}
+
 function create_local_crucible {
-	{ 	echo "id=$1"; 
-		echo "working_dir=$(pwd)"; 
+	local shared_dir
+	shared_dir="$(get_shared_dir)/crucible/$1"
+	{ 	
+		echo "id=$1"; 
+		echo "working_dir=$(pwd)";
+		echo "shared_dir=$shared_dir";
 		echo "version=$CRUCIBLE_VERSION";
 		echo "project_name=$2";
 		echo "main_file=$3";
@@ -32,21 +58,22 @@ function create_local_crucible {
 	} >> .crucible
 	
 	{
-		echo -e "#!/usr/bin/env bash";
-		echo -e "";
-		echo -e "source .mould";
+		echo "#!/usr/bin/env bash";
+		echo "";
+		echo "source .mould";
 	} >> "$3"
 	chmod +x "$3"
+	generate_mould
 }
 
 function create_shared_crucible {
-	local share_dir
-	share_dir="$(get_shared_dir)"
-	if [ ! -d "$share_dir/$1" ]
+	local shared_dir
+	shared_dir="$(get_shared_dir)"
+	if [ ! -d "$shared_dir/$1" ]
 	then
-		mkdir "$share_dir/crucible/$1" -p
+		mkdir "$shared_dir/crucible/$1" -p
 	fi
-	cp .crucible "$share_dir/crucible/$1/.crucible"
+	cp .crucible "$shared_dir/crucible/$1/.crucible"
 }
 
 function ask {
@@ -82,6 +109,22 @@ function update {
 	cp .crucible "$share_dir/crucible/$UUID/.crucible"
 }
 
+function purge {
+	local confirmation UUID share_dir
+	confirmation="$(ask 'Are you sure you want to purge this project? y/N ')"
+	if [ "$confirmation" == "y" ] || [ "$confirmation" == "Y" ]
+	then
+		echo "Purging.."
+		UUID="$(get_uuid)"
+		share_dir="$(get_shared_dir)"
+		rm -r ./* .crucible .mould
+		rm -r "$share_dir/crucible/$UUID/"
+		echo "Purged"
+	else
+		echo "Nothing will be done."
+	fi
+}
+
 case $1 in
 	init)
 		init
@@ -89,11 +132,15 @@ case $1 in
 	update)
 		update
 		;;
+	purge)
+		purge
+		;;
 	"")
 		echo "No command given"
 		echo -e "Possible values are:\\n"
 		echo "init - Initialise a directory as a Crucible project"
 		echo "update - Update current project with new version"
+		echo "purge - Remove all files belonging to this project"
 		;;
 	*)
 		echo "Unsupported command $1"
