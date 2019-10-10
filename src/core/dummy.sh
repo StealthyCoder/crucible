@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+<<CRUCIBLE_META_DATA
+CRUCIBLE_VERSION=0.1.0
+CRUCIBLE_AUTHOR=StealthyCoder
+CRUCIBLE_CREATED=1570750276
+CRUCIBLE_META_DATA
 
 function noop {
     true;

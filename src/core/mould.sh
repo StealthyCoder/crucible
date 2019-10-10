@@ -22,10 +22,10 @@ function require {
         module_version="$(grep 'CRUCIBLE_VERSION' "$shared_location$module_name" | cut -d'=' -f 2 )"
         if [ "$module_version" != "$local_crucible_version" ]
         then 
-            wget -q -O "$shared_location$module_name" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
+            wget --no-cache -q -O "$shared_location$module_name" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
         fi
     else
-        wget -q -O "$shared_location$module_name" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
+        wget --no-cache -q -O "$shared_location$module_name" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
     fi
     source "$shared_location$module_name"
 }
