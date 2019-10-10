@@ -22,7 +22,7 @@ function get_shared_dir {
 }
 
 function generate_mould {
-	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/master/src/core/mould.sh"
+	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/v0.1.0/src/core/mould.sh"
 }
 
 function create_local_crucible {
