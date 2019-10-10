@@ -15,7 +15,7 @@ function require {
         exit 1
     fi
     shared_location="$(grep 'shared_dir' .crucible | cut -d'=' -f 2)/"
-    module_name="$(echo $1 | cut -d'/' -f 2)"
+    module_name="$(echo "$1" | cut -d'/' -f 2)"
     if [ -f "$shared_location$module_name" ]
     then
         local module_version
@@ -27,5 +27,6 @@ function require {
     else
         wget --no-cache -q -O "$shared_location$module_name" "https://raw.githubusercontent.com/StealthyCoder/crucible/mould/src/${1%.sh}.sh"
     fi
+    # shellcheck disable=SC1090
     source "$shared_location$module_name"
 }
