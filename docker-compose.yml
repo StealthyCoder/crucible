@@ -6,7 +6,16 @@ services:
     build:
       context: docker/shellcheck
       dockerfile: Dockerfile
-    image: shellcheck-crucible
+    image: crucible/shellcheck:1.0
     volumes:
-      - ./src/crucible:/srv/crucible
-    
+      - ./src/:/srv/crucible
+  
+  crucible:
+    container_name: crucible
+    build:
+      context: docker/crucible
+      dockerfile: Dockerfile
+    image: crucible/bash:1.0
+    volumes:
+      - ./src/:/srv/crucible
+      - ./src/bin/crucible:/bin/crucible
