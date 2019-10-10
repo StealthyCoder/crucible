@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+CRUCIBLE_VERSION=0.1.0
+
+function get_uuid {
+	grep 'id' .crucible | cut -d'=' -f 2
+}
+
+
+function generate_uuid {
+	local uuid
+	uuid="$(head -c 1K </dev/urandom | sha256sum -bz | cut -d' ' -f1 | tr -dc '[:print:]')"
+	echo "$uuid"
+}
+
+function get_shared_dir {
+ if [ -z "$XDG_DATA_HOME" ]
+ then
+	echo "$HOME/.local/share"
+ else
+	echo "$XDG_DATA_HOME"
+ fi
+}
+
+function create_local_crucible {
+	{ 	echo "id=$1"; 
+		echo "working_dir=$(pwd)"; 
+		echo "version=$CRUCIBLE_VERSION";
+		echo "project_name=$2";
+		echo "main_file=$3";
+		echo "author=$(whoami)";
+		echo "created=$(date +%s)";
+	} >> .crucible
+	
+	{
+		echo -e "#!/usr/bin/env bash";
+		echo -e "";
+		echo -e "source .mould";
+	} >> "$3"
+	chmod +x "$3"
+}
+
+function create_shared_crucible {
+	local share_dir
+	share_dir="$(get_shared_dir)"
+	if [ ! -d "$share_dir/$1" ]
+	then
+		mkdir "$share_dir/crucible/$1" -p
+	fi
+	cp .crucible "$share_dir/crucible/$1/.crucible"
+}
+
+function ask {
+	read -r -p "$1" var
+	echo "$var"
+}
+
+function ask_project_name {
+	ask 'What will be the name given to this project? '
+}
+
+function ask_main_file {
+	ask 'What will be the name given to the main file? '
+}
+
+function init {
+	if [ ! -f .crucible ]
+	then
+		local UUID PROJECT_NAME MAIN_FILE
+		UUID="$(generate_uuid)"
+		PROJECT_NAME="$(ask_project_name)"
+		MAIN_FILE="$(ask_main_file)"
+		create_local_crucible "$UUID" "$PROJECT_NAME" "$MAIN_FILE"
+		create_shared_crucible "$UUID"
+	fi
+}
+
+function update {
+	local UUID share_dir
+	UUID="$(get_uuid)"
+	share_dir="$(get_shared_dir)"
+	sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
+	cp .crucible "$share_dir/crucible/$UUID/.crucible"
+}
+
+case $1 in
+	init)
+		init
+		;;
+	update)
+		update
+		;;
+	"")
+		echo "No command given"
+		echo -e "Possible values are:\\n"
+		echo "init - Initialise a directory as a Crucible project"
+		echo "update - Update current project with new version"
+		;;
+	*)
+		echo "Unsupported command $1"
+		;;
+esac

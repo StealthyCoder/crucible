@@ -1,0 +1,21 @@
+version: '3.6'
+
+services:
+  shellcheck:
+    container_name: shellcheck
+    build:
+      context: docker/shellcheck
+      dockerfile: Dockerfile
+    image: crucible/shellcheck:1.0
+    volumes:
+      - ./src/:/srv/crucible
+  
+  crucible:
+    container_name: crucible
+    build:
+      context: docker/crucible
+      dockerfile: Dockerfile
+    image: crucible/bash:1.0
+    volumes:
+      - ./src/:/srv/crucible
+      - ./src/bin/crucible:/bin/crucible
