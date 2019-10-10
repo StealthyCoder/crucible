@@ -21,26 +21,8 @@ function get_shared_dir {
  fi
 }
 
-# shellcheck disable=SC2016
 function generate_mould {
-	{
-		echo 'function require { ';
-		echo 'local local_crucible_version shared_crucible_version shared_location';
-		echo 'local_crucible_version="$(grep '"'version'"' .crucible | cut -d'"'='"' -f 2)"';
-		echo 'shared_crucible_version="$( grep '"'version'"' $(grep '"'shared_dir'"' .crucible | cut -d'"'='"' -f 2)/.crucible | cut -d'"'='"' -f 2)"';
-		echo 'if [ "$local_crucible_version" != "$shared_crucible_version" ]; then echo "Versions out of sync. Please run crucible update."; exit 1; fi';
-		echo 'if [ -z "$1" ]; then echo "Module to require has to be specified."; exit 1; fi';
-		echo 'shared_location="$(grep '"'shared_dir'"' .crucible | cut -d'"'='"' -f 2)/"';
-		echo 'if [ -f "$shared_location$1" ]';
-		echo 'then';
-		echo 'local module_version';
-		echo 'module_version="$(grep '"'CRUCIBLE_VERSION'"' "$shared_location$1" | cut -d'"'='"' -f 2 )"';
-		echo 'if [ "$module_version" != "$local_crucible_version" ]; then echo "Get other module version"; fi';
-		echo 'else';
-		echo 'echo "Getting module $1"';
-		echo 'fi';
-		echo '}';
-	} >> .mould
+	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/master/src/core/mould.sh"
 }
 
 function create_local_crucible {
