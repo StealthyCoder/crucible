@@ -1,5 +1,5 @@
 # crucible
-A shell script framework. This framework exists to help make it easier to create shell script packages with reusable code and modules that are curated and safe.
+A shell script framework. This framework exists to help make it easier to create shell script packages with reusable code and modules that are curated and safe. These reusable modules will be _installed_ into a shared location per project similar to how [virtualenv](https://virtualenv.pypa.io/) works for Python. 
 
 For now this only supports **Bash**. 
 
