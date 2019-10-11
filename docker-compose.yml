@@ -17,5 +17,5 @@ services:
       dockerfile: Dockerfile
     image: crucible/bash:1.0
     volumes:
-      - ./src/:/srv/crucible
-      - ./src/bin/crucible:/bin/crucible
+      - ./src/bash:/srv/crucible
+      - ./src/bash/bin/crucible:/bin/crucible
