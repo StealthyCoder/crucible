@@ -119,12 +119,12 @@ case $1 in
 	purge)
 		purge
 		;;
-	"")
-		echo "No command given"
+	"" | help)
 		echo -e "Possible values are:\\n"
 		echo "init - Initialise a directory as a Crucible project"
 		echo "update - Update current project with new version"
 		echo "purge - Remove all files belonging to this project"
+		echo "help - Print this help message"
 		;;
 	*)
 		echo "Unsupported command $1"
