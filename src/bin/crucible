@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.1.0
+CRUCIBLE_VERSION=0.2.0
+CRUCIBLE_LOCATION=develop
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
@@ -22,7 +23,7 @@ function get_shared_dir {
 }
 
 function generate_mould {
-	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/v0.1.0/src/core/mould.sh"
+	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/$CRUCIBLE_LOCATION/src/core/mould.sh"
 }
 
 function create_local_crucible {
@@ -33,6 +34,7 @@ function create_local_crucible {
 		echo "working_dir=$(pwd)";
 		echo "shared_dir=$shared_dir";
 		echo "version=$CRUCIBLE_VERSION";
+		echo "location=$CRUCIBLE_LOCATION";
 		echo "project_name=$2";
 		echo "main_file=$3";
 		echo "author=$(whoami)";
