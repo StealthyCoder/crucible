@@ -9,6 +9,7 @@ services:
     image: crucible/shellcheck:1.0
     volumes:
       - ./src/:/srv/crucible
+      - ./.sh:/srv/.sh
   
   crucible:
     container_name: crucible
@@ -17,5 +18,6 @@ services:
       dockerfile: Dockerfile
     image: crucible/bash:1.0
     volumes:
-      - ./src/bash:/srv/crucible
+      - ./src:/srv/src
       - ./src/bash/bin/crucible:/bin/crucible
+      - ./.sh:/srv/.sh
