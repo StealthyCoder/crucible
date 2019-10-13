@@ -13,7 +13,6 @@ function require {
     if [ "$local_crucible_version" != "$shared_crucible_version" ]
     then 
         echo "Versions out of sync. Please run crucible update."
-        exit 1 
     fi
     if [ -z "$1" ]
     then 
