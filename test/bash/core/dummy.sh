@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090
 source "$(dirname "$0")/../../.utils"
-cd "$(dirname "$0")"
+mkdir tmp/core/dummy -p
+cd tmp/core/dummy || fail "Could not change dir"
 setup
-
-cat .mould
+# shellcheck disable=SC1091
 source .mould
 
 require core/dummy

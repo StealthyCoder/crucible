@@ -35,10 +35,10 @@ function require {
         module_version="$(grep 'CRUCIBLE_VERSION' "$module_file" | cut -d'=' -f 2 )"
         if [ "$module_version" != "$local_crucible_version" ]
         then 
-            wget --no-cache -q -O "$module_file" "https://raw.githubusercontent.com/StealthyCoder/crucible/$crucible_location/src/${1%.sh}.sh"
+            wget --no-cache -q -O "$module_file" "https://raw.githubusercontent.com/StealthyCoder/crucible/$crucible_location/src/bash/${1%.sh}.sh"
         fi
     else
-        wget --no-cache -q -O "$module_file" "https://raw.githubusercontent.com/StealthyCoder/crucible/$crucible_location/src/${1%.sh}.sh"
+        wget --no-cache -q -O "$module_file" "https://raw.githubusercontent.com/StealthyCoder/crucible/$crucible_location/src/bash/${1%.sh}.sh"
     fi
     # shellcheck disable=SC1090
     source "$module_file"

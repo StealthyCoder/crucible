@@ -4,6 +4,7 @@ function intro {
 
 function fail {
     echo -e "\\033[38;5;196m$1\\033[0m"
+    teardown
     exit 1
 }
 
@@ -12,9 +13,13 @@ function success {
 }
 
 function setup {
+    echo -e "\\033[38;5;199mSetting up"
     yes | crucible init
+    echo -e "\\033[0m"
 }
 
 function teardown {
+    echo -e "\\033[38;5;199mTearing down\\033[38;5;210m"
     yes | crucible purge
+    echo -e "\\033[0m"
 }
