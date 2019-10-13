@@ -1,0 +1,20 @@
+function intro {
+    echo -e "\\033[38;5;86m$1\\033[38;5;210m"
+}
+
+function fail {
+    echo -e "\\033[38;5;196m$1\\033[0m"
+    exit 1
+}
+
+function success {
+    echo -e "\\033[38;5;82m Passed \\033[0m"
+}
+
+function setup {
+    yes | crucible init
+}
+
+function teardown {
+    yes | crucible purge
+}
