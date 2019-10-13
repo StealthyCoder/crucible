@@ -5,14 +5,12 @@
 # CRUCIBLE_CREATED={CRUCIBLE_CREATED}
 ### CRUCIBLE META DATA ###
 
-function arrays.get_array {
-    local arr 
-    arr=()
-    echo "${arr[@]}"
-}
-
 function arrays.transform_into_array {
-    declare -a "$1"
+    local -a arr
+    local print
+    arr=()
+    print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+    eval "$print"
 }
 
 function arrays.add_to_array {
