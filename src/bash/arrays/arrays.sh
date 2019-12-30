@@ -15,7 +15,7 @@ function arrays.transform_into_array {
 
 function arrays.add {
     __verify_nr_args "$#" 2 arrays.add
-    __verify_if_first_arg_is_array "$1"
+    __verify_if_arg_is_array "$1"
     local arr element print
     print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
     eval "$print"
@@ -25,8 +25,12 @@ function arrays.add {
     eval "$print"
 }
 
+function arrays.push {
+    arrays.add "$1" "$2"
+}
+
 function arrays.add_all {
-    __verify_if_first_arg_is_array "$1"
+    __verify_if_arg_is_array "$1"
     local arr element print export_name
     print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
     eval "$print"
@@ -43,8 +47,93 @@ function arrays.add_all {
     eval "$print"
 }
 
+function arrays.concat {
+    __verify_if_arg_is_array "$1"
+    __verify_if_arg_is_array "$2"
+    local src target print
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/src=/" )"
+    eval "$print"
+    print="$(declare -p "$2" | sed -e "s/declare -ax $2=/target=/" )"
+    eval "$print"
+    for element in "${target[@]}"
+    do
+        src+=("$element")
+    done
+    print="$(declare -p src | sed -e "s/declare -a src=/export $1=/" )"
+    eval "$print"
+}
+
+function arrays.get {
+    __verify_nr_args "$#" 2 arrays.get
+    __verify_if_arg_is_array "$1"
+    local arr element print
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+    eval "$print"
+    echo "${arr[$2]}"
+}
+
+function arrays.pop {
+    __verify_if_arg_is_array "$1"
+
+    local arr last element print size counter
+    local -a target
+    target=()
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+    eval "$print"
+    if [ "${#arr[@]}" -le 0 ]
+    then
+        return 0
+    fi
+
+    last="${arr[-1]}"
+    size="$(( ${#arr[@]} - 1 ))"
+    counter=0
+    while test "$counter" -ne "$size"
+    do
+        element="${arr[$counter]}"
+        target+=("$element")
+        counter="$((counter + 1))"
+    done
+
+    print="$(declare -p target | sed -e "s/declare -a target=/export $1=/" )"
+    eval "$print"
+
+    echo "$last"
+
+}
+
+function arrays.values {
+    __verify_if_arg_is_array "$1"
+
+    local arr print
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+    eval "$print"
+    echo "${arr[@]}"
+}
+
+function arrays.entries {
+     __verify_if_arg_is_array "$1"
+
+    local arr print size counter
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+    eval "$print"
+    if [ "${#arr[@]}" -le 0 ]
+    then
+        return 0
+    fi
+
+    size="$(( ${#arr[@]} ))"
+    counter=0
+    while test "$counter" -ne "$size"
+    do
+        echo "Index: $counter, Value: ${arr[$counter]}"
+        counter="$((counter + 1))"
+    done
+
+}
+
 function arrays.clear {
-    __verify_if_first_arg_is_array "$1"
+    __verify_if_arg_is_array "$1"
     arrays.transform_into_array "$1"
 }
 
@@ -65,10 +154,10 @@ function __verify_nr_args {
     fi
 }
 
-function __verify_if_first_arg_is_array {
+function __verify_if_arg_is_array {
     if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -ax\ "$1"= ]]
     then
-        echo "First argument needs to be an array created by arrays.transform_into_array"
+        echo "Argument needs to be an array created by arrays.transform_into_array"
         exit 1
     fi
 }
