@@ -19,6 +19,8 @@ function dummy.noop {
     success
 }
 
+echo "Testing core/dummy"
+
 for test in "${tests[@]}"
 do
     "$test"

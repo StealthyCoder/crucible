@@ -16,6 +16,9 @@ tests+=("arrays.arrays.add" "arrays.arrays.push")
 tests+=("arrays.arrays.add_all")
 tests+=("arrays.arrays.concat")
 tests+=("arrays.arrays.get" "arrays.arrays.pop")
+tests+=("arrays.arrays.values")
+tests+=("arrays.arrays.entries")
+tests+=("arrays.arrays.clear")
 
 function arrays.arrays.transform_into_array {
     intro "arrays.arrays.transform_into_array"
@@ -35,7 +38,7 @@ function arrays.arrays.add {
     arrays.add a 1
     
     test $? -eq 0 || fail "Could not add to array"
-
+    # shellcheck disable=SC2154
     test "${a[@]}" = "1" || fail "Array does not contain element"
     
     success
@@ -61,8 +64,8 @@ function arrays.arrays.add_all {
     arrays.add_all a 1 2 3 4 5
     
     test $? -eq 0 || fail "Could not add to array"
-    
-    test "${#a[@]}" = "5" || fail "Array does not contain all elements"
+    __verify_nr_args "${#a[@]}" 5 arrays.arrays.add_all
+    test $? -eq 0 || fail "Array does not contain all elements"
 
     success
 }
@@ -79,7 +82,8 @@ function arrays.arrays.concat {
     
     test $? -eq 0 || fail "Could not concat arrays"
     
-    test "${#a[@]}" = "9" || fail "Array does not contain all elements"
+    __verify_nr_args "${#a[@]}" 9 arrays.arrays.concat
+    test $? -eq 0 || fail "Array does not contain all elements"
 
     success
 }
@@ -92,7 +96,7 @@ function arrays.arrays.get {
     arrays.add_all a 1
     b="$(arrays.get a 0)"
 
-    test $? -eq 0 || fail "Could get from array"
+    test $? -eq 0 || fail "Could not get from array"
     
     test "$b" = 1 || fail "Did not get correct element"
 
@@ -105,25 +109,78 @@ function arrays.arrays.pop {
     arrays.transform_into_array a
     
     arrays.add_all a 1 2
-    echo ${a[@]}
-    b="$(arrays.pop a)"
-    echo ${a[@]}
-    test $? -eq 0 || fail "Could get from array"
+    arrays.pop a b
+
+    test $? -eq 0 || fail "Could not get from array"
     
     test "$b" = 2 || fail "Did not get correct element, expected 2 got $b"
 
-    b="$(arrays.pop a)"
+    arrays.pop a b
 
-    test $? -eq 0 || fail "Could get from array"
+    test $? -eq 0 || fail "Could not get from array"
     
     test "$b" = 1 || fail "Did not get correct element, expected 1 got $b"
     
-    b="$(arrays.pop a)"
+    arrays.pop a b
 
     test $? -eq 0 || fail "Error thrown"
 
+    __verify_nr_args "${#a[@]}" 0 arrays.arrays.pop
+    test $? -eq 0 || fail "Array not cleared"
+
+
     success
 }
+
+function arrays.arrays.values {
+    intro "arrays.arrays.values"
+    local b
+    arrays.transform_into_array a
+    
+    arrays.add_all a 1 2
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "1 2" || fail "Did not get correct element"
+
+    success
+}
+
+function arrays.arrays.entries {
+    intro "arrays.arrays.entries"
+    local b
+    
+    arrays.transform_into_array a
+    
+    arrays.add_all a 1 2
+    b="$(arrays.entries a)"
+    
+    test $? -eq 0 || fail "Could not get from array"
+    
+    b="$(echo "$b" | tr -d "[:cntrl:]")"
+    test "$b" = "Index: 0, Value: 1Index: 1, Value: 2" || fail "Did not get correct element"
+
+    success
+}
+
+function arrays.arrays.clear {
+    intro "arrays.arrays.clear"
+       
+    arrays.transform_into_array a
+    
+    arrays.add_all a 1 2
+        
+    test $? -eq 0 || fail "Could not get from array"
+    
+    arrays.clear a
+    __verify_nr_args "${#a[@]}" 0 arrays.arrays.clear
+    test $? -eq 0 || fail "Array not cleared"
+
+    success
+}
+
+echo "Testing arrays/arrays"
 
 for test in "${tests[@]}"
 do
