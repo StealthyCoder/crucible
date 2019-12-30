@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.2.0
+CRUCIBLE_VERSION=0.2.1
 CRUCIBLE_LOCATION=${CRUCIBLE_LOCATION:-develop}
 
 function get_uuid {
