@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.1.0
+CRUCIBLE_VERSION=0.2.0
+CRUCIBLE_LOCATION=v0.2.0
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
@@ -22,7 +23,7 @@ function get_shared_dir {
 }
 
 function generate_mould {
-	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/v0.1.0/src/core/mould.sh"
+	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/$CRUCIBLE_LOCATION/src/bash/core/mould.sh"
 }
 
 function create_local_crucible {
@@ -33,6 +34,7 @@ function create_local_crucible {
 		echo "working_dir=$(pwd)";
 		echo "shared_dir=$shared_dir";
 		echo "version=$CRUCIBLE_VERSION";
+		echo "location=$CRUCIBLE_LOCATION";
 		echo "project_name=$2";
 		echo "main_file=$3";
 		echo "author=$(whoami)";
@@ -88,6 +90,7 @@ function update {
 	UUID="$(get_uuid)"
 	share_dir="$(get_shared_dir)"
 	sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
+	sed -i .crucible -e "s/^location=.*$/location=${CRUCIBLE_LOCATION//\//\\\/}/g"
 	cp .crucible "$share_dir/crucible/$UUID/.crucible"
 }
 
@@ -117,12 +120,12 @@ case $1 in
 	purge)
 		purge
 		;;
-	"")
-		echo "No command given"
+	"" | help)
 		echo -e "Possible values are:\\n"
 		echo "init - Initialise a directory as a Crucible project"
 		echo "update - Update current project with new version"
 		echo "purge - Remove all files belonging to this project"
+		echo "help - Print this help message"
 		;;
 	*)
 		echo "Unsupported command $1"

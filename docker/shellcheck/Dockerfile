@@ -5,10 +5,16 @@ RUN apt update && \
     apt install -y shellcheck
 
 RUN echo '#!/usr/bin/env bash\n\
-for f in $(ls /srv/crucible/**/*)\n\
+for f in $(ls /srv/crucible/bash/**/*)\n\
 do\n\
-if [ -f $f ]; then shellcheck $f -x; fi\n\
+if [ -f $f ]; then shellcheck $f -x -s bash; fi\n\
 done\n\
+for f in $(ls /srv/crucible-test/bash/**/*)\n\
+do\n\
+if [ -f $f ]; then shellcheck $f -x -s bash; fi\n\
+done\n\
+shellcheck /srv/crucible-test/.utils -s bash \n\
+shellcheck /srv/.sh/*.sh -s bash\n\
 ' >> /var/run/startup.sh
 
 
