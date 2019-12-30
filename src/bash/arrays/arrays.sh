@@ -98,7 +98,7 @@ function arrays.pop {
     print="$(declare -p target | sed -e "s/declare -a target=/export $1=/" )"
     eval "$print"
 
-    echo "$last"
+    eval "export $2=$last"
 
 }
 
