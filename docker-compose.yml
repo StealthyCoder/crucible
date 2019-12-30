@@ -33,3 +33,5 @@ services:
       - ./test:/srv/test
       - ./src:/srv/src
       - ./src/bash/bin/crucible:/bin/crucible
+    environment:
+      CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}

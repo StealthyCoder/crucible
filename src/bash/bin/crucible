@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 CRUCIBLE_VERSION=0.2.0
-CRUCIBLE_LOCATION=develop
+CRUCIBLE_LOCATION=${CRUCIBLE_LOCATION:-develop}
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
@@ -90,7 +90,7 @@ function update {
 	UUID="$(get_uuid)"
 	share_dir="$(get_shared_dir)"
 	sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
-	sed -i .crucible -e "s/^location=.*$/location=$CRUCIBLE_LOCATION/g"
+	sed -i .crucible -e "s/^location=.*$/location=${CRUCIBLE_LOCATION//\//\\\/}/g"
 	cp .crucible "$share_dir/crucible/$UUID/.crucible"
 }
 

@@ -57,6 +57,7 @@ function crucible.update.verify {
     crucible update
     version="$(grep 'version=' .crucible | cut -d'=' -f2)"
     test "$version" = "$CRUCIBLE_VERSION" || fail "Version was not updated"
+    test $? -eq 0 || fail "Crucible update commmand dit not exit succesfully"
     cp /tmp/crucible_restore "$(command -v crucible)"
 }
 

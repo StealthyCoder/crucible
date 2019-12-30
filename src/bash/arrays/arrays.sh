@@ -158,6 +158,7 @@ function __verify_if_arg_is_array {
     if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -ax\ "$1"= ]]
     then
         echo "Argument needs to be an array created by arrays.transform_into_array"
-        exit 1
+        return 1
     fi
+    return 0
 }
