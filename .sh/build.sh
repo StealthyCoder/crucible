@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd "$(dirname "$0")" || echo "Could not change directory" && exit 1
+
 declare -a shells
 
 shells=("bash")
