@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1090
+source "$(dirname "$0")/../../.utils"
+
+declare -a tests
+
+tests=("crucible.init" "crucible.update" "crucible.purge")
+
+
+function crucible.init.setup {
+    intro "crucible.init.setup"
+    mkdir /tmp/test
+    cd /tmp/test || return
+    yes | crucible init
+}
+
+function crucible.init.verify_local {
+    intro "crucible.init.verify_local"
+    test -f .crucible || fail ".crucible file has not been created"
+    test -f .mould || fail ".mould file has not been created"
+    test -n "$(cat .mould)" || fail ".mould file contains no content"
+    cp .crucible .crucible_org
+    declare -a fields		
+    fields=("id=" "working_dir=" "shared_dir=" "version=")
+    fields+=("location=" "project_name=" "main_file=" "author=")
+    fields+=("created=")
+    for field in "${fields[@]}"
+    do
+        test -n "$(grep "$field" .crucible )" || fail "Field $field is not present in .crucible"
+        test -n "$(grep "$field" .crucible | cut -d'=' -f2)" || fail "Field $field has zero value"
+        sed -i -e "/$field/d" .crucible
+    done
+    test -z "$(cat .crucible)" || fail ".crucible contains more fields than tested: $(cat .crucible)"
+    mv .crucible_org .crucible
+    local main_file
+    main_file="$(grep 'main_file=' .crucible | cut -d'=' -f2 )"
+    test -f "$main_file" || fail "Main file not created"
+    test -x "$main_file" || fail "Main file has wrong permissions"
+}
+
+function crucible.init.verify_shared_location {
+    intro "crucible.init.verify_shared_location"
+    local shared_dir
+    shared_dir="$(grep 'shared_dir=' .crucible | cut -d'=' -f2)"
+    test -d "$shared_dir" || fail "Could not find shared dir location: $shared_dir"
+    test "$(cat .crucible)" = "$(cat "$shared_dir"/.crucible)" || fail ".crucible files are not the same"
+}
+
+function crucible.update.verify {
+    intro "crucible.update.verify"
+    local CRUCIBLE_VERSION version
+    CRUCIBLE_VERSION=99.99.99
+    cp "$(command -v crucible)" /tmp/crucible_org   
+    cp /tmp/crucible_org /tmp/crucible_restore
+    sed -i -e "s/CRUCIBLE_VERSION=[0-9].[0-9].[0-9]/CRUCIBLE_VERSION=$CRUCIBLE_VERSION/g" /tmp/crucible_org
+    cp /tmp/crucible_org "$(command -v crucible)"
+    crucible update
+    version="$(grep 'version=' .crucible | cut -d'=' -f2)"
+    test "$version" = "$CRUCIBLE_VERSION" || fail "Version was not updated"
+    test $? -eq 0 || fail "Crucible update commmand dit not exit succesfully"
+    cp /tmp/crucible_restore "$(command -v crucible)"
+}
+
+function crucible.purge.verify {
+    intro "crucible.purge.verify"
+    local shared_dir
+    shared_dir="$(grep 'shared_dir=' .crucible | cut -d'=' -f2)"
+    yes | crucible purge
+    test -z "$(ls -A)" || fail "Files still remain locally"
+    test ! -d "$shared_dir" || fail "Shared location still remains"
+}
+
+function crucible.init {
+    echo "Testing crucible init"
+    crucible.init.setup
+    crucible.init.verify_local
+    crucible.init.verify_shared_location
+    success
+}
+
+function crucible.update {
+    echo "Testing crucible update"
+    crucible.update.verify
+    success
+}
+
+function crucible.purge {
+    echo "Testing crucible purge"
+    crucible.purge.verify
+    success
+}
+
+
+for test in "${tests[@]}"
+do
+    "$test"
+done
