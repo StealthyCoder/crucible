@@ -17,6 +17,14 @@ The init will turn the directory where it is run into a **crucible** project. It
 
 The update command will update the project with a new version of **crucible**
 
+### _purge_
+
+The purge command will delete the project and associated **crucible** assets
+
+### _pour_
+
+The pour command will get the associated **crucible** assets and pour it into a distributable `.tar.gz` file
+
 # Docker
 
 To make local development easier there exist some docker images to help out.
