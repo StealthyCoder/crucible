@@ -25,6 +25,24 @@ function arrays.add {
     eval "$print"
 }
 
+function arrays.add_all {
+    __verify_if_first_arg_is_array "$1"
+    local arr element print export_name
+    print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+    eval "$print"
+    export_name="$1"
+    shift
+    while test $# -gt 0
+    do
+        element="$1"
+        arr+=("$element")
+        shift
+    done
+    
+    print="$(declare -p arr | sed -e "s/declare -a arr=/export $export_name=/" )"
+    eval "$print"
+}
+
 function arrays.clear {
     __verify_if_first_arg_is_array "$1"
     arrays.transform_into_array "$1"
