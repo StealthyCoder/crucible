@@ -28,7 +28,7 @@ function fix_location {
     location="v$NEW_VERSION"
     for shell in "${shells[@]}"
     do
-        sed -i -e "s/^CRUCIBLE_LOCATION=/CRUCIBLE_LOCATION=$location/" "../src/$shell/bin/crucible"
+        sed -i -e "s/^CRUCIBLE_LOCATION=.*/CRUCIBLE_LOCATION=$location/" "../src/$shell/bin/crucible"
     done
 }
 
