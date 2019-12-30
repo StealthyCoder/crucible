@@ -13,17 +13,9 @@ function arrays.transform_into_array {
     eval "$print"
 }
 
-function arrays.add_to_array {
-    if [ "$(__check_nr_args "$#" 2)" != "true" ]
-    then
-        echo "Need exactly two arguments for arrays.add_to_array"
-        exit 1
-    fi
-    if [ "$(declare -p "$1" 2>/dev/null)" != "declare -ax $1=()" ]
-    then
-        echo "First argument needs to be an array created by arrays.transform_into_array"
-        exit 1
-    fi
+function arrays.add {
+    __verify_nr_args "$#" 2 arrays.add
+    __verify_if_first_arg_is_array "$1"
     local arr element print
     print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
     eval "$print"
@@ -33,17 +25,32 @@ function arrays.add_to_array {
     eval "$print"
 }
 
-function __check_nr_args {
-    if [ "$#" -ne 2 ]
+function arrays.clear {
+    __verify_if_first_arg_is_array "$1"
+    arrays.transform_into_array "$1"
+}
+
+function __verify_nr_args {
+    if [ "$#" -ne 3 ]
     then
-        echo "Must pass two arguments to this function."
-        echo "Error"
+        echo "Must pass three arguments to this function."
+        echo " 1. Number of arguments gotten"
+        echo " 2. Number of arguments expected"
+        echo " 3. Name of the function"
+        echo " Example: __verify_nr_args 1 1 arrays.dummy"
+        exit 1
     fi
     if [ "$1" -ne "$2" ]
     then
-        echo false
-    else
-        echo true
+        echo "Need exactly $2 arguments for $3, gotten only $1"
+        exit 1
     fi
-    
+}
+
+function __verify_if_first_arg_is_array {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -ax\ "$1"= ]]
+    then
+        echo "First argument needs to be an array created by arrays.transform_into_array"
+        exit 1
+    fi
 }
