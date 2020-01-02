@@ -14,44 +14,47 @@ function _echo {
 function _format {
     case $1 in
         INFO)
-            _echo "$(cyan)[ INFO ] $2 $(reset)"
+            _echo "$(__cyan)[ INFO ] $2 $(__reset)"
             ;;
         DEBUG)
-            _echo "$(blue)[ DEBUG ] $2 $(reset)"
+            _echo "$(__blue)[ DEBUG ] $2 $(__reset)"
             ;;
         WARNING)
-            _echo "$(yellow)[ WARNING ] $2 $(reset)"
+            _echo "$(__yellow)[ WARNING ] $2 $(__reset)"
             ;;
         ERROR)
-            _echo "$(red)[ ERROR ] $2 $(reset)"
+            _echo "$(__red)[ ERROR ] $2 $(__reset)"
+            ;;
+        SUCCESS)
+            _echo "$(__green)[ SUCCESS ] $2 $(__reset)"
             ;;
         *)
-            _echo "$(cyan)[ INFO ] $2 $(reset)"
+            _echo "$(__cyan)[ INFO ] $2 $(__reset)"
             ;;
     esac
 }
 
-function cyan {
+function __cyan {
     _echo "$CYAN"
 }
 
-function yellow {
+function __yellow {
     _echo "$YELLOW"
 }
 
-function green {
+function __green {
     _echo "$GREEN"
 }
 
-function red {
+function __red {
     _echo "$RED"
 }
 
-function blue {
+function __blue {
     _echo "$RED"
 }
 
-function reset {
+function __reset {
     _echo "$RESET"
 }
 

@@ -22,10 +22,14 @@ RED="${ESCAPE_CHAR}31m"
 RESET="${ESCAPE_CHAR}0m"
 
 # shellcheck disable=SC2034
-INFO="INFO"
-# shellcheck disable=SC2034
 DEBUG="DEBUG"
 # shellcheck disable=SC2034
 WARNING="WARNING"
 # shellcheck disable=SC2034
 ERROR="ERROR"
+# shellcheck disable=SC2034
+SUCCESS="SUCCESS"
+
+function logging.level.info {
+    echo "INFO"
+}
