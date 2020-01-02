@@ -12,21 +12,21 @@ function logging.info {
 }
 
 function logging.debug {
-    _format "$DEBUG" "$1"
+    _format "$(logging.level.debug)" "$1"
 }
 
 function logging.warning {
-    _format "$WARNING" "$1"
+    _format "$(logging.level.warning)" "$1"
 }
 
 function logging.error {
-    _format "$ERROR" "$1"
+    _format "$(logging.level.error)" "$1"
 }
 
 function logging.success {
-    _format "$SUCCESS" "$1"
+    _format "$(logging.level.success)" "$1"
 }
 
 function logging.message {
-    _format "$INFO" "$1"
+    _format "$(logging.level.info)" "$1"
 }

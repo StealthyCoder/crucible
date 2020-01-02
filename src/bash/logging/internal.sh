@@ -14,22 +14,22 @@ function _echo {
 function _format {
     case $1 in
         INFO)
-            _echo "$(__cyan)[ INFO ] $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $2 $(__reset)"
             ;;
         DEBUG)
-            _echo "$(__blue)[ DEBUG ] $2 $(__reset)"
+            _echo "$(__blue)[ $1 ] $2 $(__reset)"
             ;;
         WARNING)
-            _echo "$(__yellow)[ WARNING ] $2 $(__reset)"
+            _echo "$(__yellow)[ $1 ] $2 $(__reset)"
             ;;
         ERROR)
-            _echo "$(__red)[ ERROR ] $2 $(__reset)"
+            _echo "$(__red)[ $1 ] $2 $(__reset)"
             ;;
         SUCCESS)
-            _echo "$(__green)[ SUCCESS ] $2 $(__reset)"
+            _echo "$(__green)[ $1 ] $2 $(__reset)"
             ;;
         *)
-            _echo "$(__cyan)[ INFO ] $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $2 $(__reset)"
             ;;
     esac
 }
