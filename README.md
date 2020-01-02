@@ -53,7 +53,7 @@ By running the following command you get a nice clean environment in which `cruc
 
 - [ ] Dates
 - [ ] Logging
-- [ ] Arrays
+- [X] Arrays
 
 # Static Code Analysis
 
