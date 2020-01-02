@@ -66,3 +66,7 @@ function logging.set_level {
     fi
     
 }
+
+function logging.set_level_override {
+    logging.set_level "$1" true
+}
