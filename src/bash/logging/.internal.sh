@@ -59,12 +59,8 @@ function __reset {
 }
 
 function __check_log_level {
-    local set_log_level
+    local set_log_level level_to_check
     set_log_level="$(__log_level_enum "${CRUCIBLE_LOGGING_LEVEL:-INFO}")"
-    if [ "$(__log_level_enum "$1")" -le "$set_log_level" ]
-    then
-        echo "true"
-    else
-        echo "false"
-    fi
+    level_to_check="$(__log_level_enum "$1")"
+    echo "$(( level_to_check <= set_log_level ))"
 }
