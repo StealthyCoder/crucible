@@ -28,5 +28,5 @@ function logging.success {
 }
 
 function logging.message {
-    _format "$(logging.level.info)" "$1"
+    _format "${CRUCIBLE_LOGGING_LEVEL:-INFO}" "$1"
 }
