@@ -48,11 +48,12 @@ By running the following command you get a nice clean environment in which `cruc
 - [ ] Fish
 - [ ] csh
 - [ ] ksh
+- [ ] zsh
 
 ## Core
 
 - [ ] Dates
-- [ ] Logging
+- [X] Logging
 - [X] Arrays
 
 # Static Code Analysis
