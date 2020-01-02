@@ -55,5 +55,14 @@ function logging.set_level {
     if [ "${CRUCIBLE_LOGGING_LEVEL:-xxx__xxx}" == "xxx__xxx" ]
     then
         CRUCIBLE_LOGGING_LEVEL="$1"
+    else
+        if [ "$#" -gt 1 ]
+        then
+            if [ "$2" == "true" ]
+            then
+                CRUCIBLE_LOGGING_LEVEL="$1"
+            fi
+        fi
     fi
+    
 }
