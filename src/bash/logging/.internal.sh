@@ -5,7 +5,7 @@
 # CRUCIBLE_CREATED={CRUCIBLE_CREATED}
 ### CRUCIBLE META DATA ###
 
-require logging/constants
+require logging/.constants
 
 function _echo {
     echo -e "$1"
@@ -35,26 +35,34 @@ function _format {
 }
 
 function __cyan {
-    _echo "$CYAN"
+    _echo "$(logging.color.cyan)"
 }
 
 function __yellow {
-    _echo "$YELLOW"
+    _echo "$(logging.color.yellow)"
 }
 
 function __green {
-    _echo "$GREEN"
+    _echo "$(logging.color.green)"
 }
 
 function __red {
-    _echo "$RED"
+    _echo "$(logging.color.red)"
 }
 
 function __blue {
-    _echo "$BLUE"
+    _echo "$(logging.color.blue)"
 }
 
 function __reset {
-    _echo "$RESET"
+    _echo "$(logging.color.reset)"
 }
 
+function __check_log_level {
+    if [ "$1" -le "$(__log_level_enum "${CRUCIBLE_LOGGING_LEVEL:-INFO}")" ]
+    then
+        echo "true"
+    else
+        echo "false"
+    fi
+}

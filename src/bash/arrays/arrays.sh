@@ -5,7 +5,7 @@
 # CRUCIBLE_CREATED={CRUCIBLE_CREATED}
 ### CRUCIBLE META DATA ###
 
-require arrays/internal
+require core/.internal
 
 function arrays.transform_into_array {
     local -a arr
