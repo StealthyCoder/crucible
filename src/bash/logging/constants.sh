@@ -8,7 +8,7 @@
 
 ESCAPE_CHAR="\\033["
 # shellcheck disable=SC2034
-CYAN="${ESCAPE_CHAR}38;5;210m"
+CYAN="${ESCAPE_CHAR}38;5;86m"
 # shellcheck disable=SC2034
 BLUE="${ESCAPE_CHAR}34m"
 # shellcheck disable=SC2034
