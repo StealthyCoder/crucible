@@ -29,7 +29,7 @@ function logging.color.red {
     echo -e "$(logging.color.escape_char)38;5;196m"
 }
 
-function logging.color.red {
+function logging.color.reset {
     echo -e "$(logging.color.escape_char)0m"
 }
 
