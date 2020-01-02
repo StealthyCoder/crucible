@@ -51,7 +51,7 @@ function __red {
 }
 
 function __blue {
-    _echo "$RED"
+    _echo "$BLUE"
 }
 
 function __reset {
