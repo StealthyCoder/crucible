@@ -8,7 +8,7 @@
 require logging/.internal
 
 function logging.info {
-    if [ "$(__check_log_level logging.level.info)" == "true" ]
+    if [ "$(__check_log_level "$(logging.level.info)")" == "true" ]
     then
         _format "$(logging.level.info)" "$1"
     fi
@@ -16,28 +16,28 @@ function logging.info {
 }
 
 function logging.debug {
-    if [ "$(__check_log_level logging.level.debug)" == "true" ]
+    if [ "$(__check_log_level "$(logging.level.debug)")" == "true" ]
     then
         _format "$(logging.level.debug)" "$1"
     fi
 }
 
 function logging.warning {
-    if [ "$(__check_log_level logging.level.warning)" == "true" ]
+    if [ "$(__check_log_level "$(logging.level.warning)")" == "true" ]
     then
         _format "$(logging.level.warning)" "$1"
     fi
 }
 
 function logging.error {
-    if [ "$(__check_log_level logging.level.error)" == "true" ]
+    if [ "$(__check_log_level "$(logging.level.error)")" == "true" ]
     then
         _format "$(logging.level.error)" "$1"
     fi
 }
 
 function logging.success {
-    if [ "$(__check_log_level logging.level.success)" == "true" ]
+    if [ "$(__check_log_level "$(logging.level.success)")" == "true" ]
     then
         _format "$(logging.level.success)" "$1"
     fi
