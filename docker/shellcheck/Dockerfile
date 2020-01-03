@@ -5,6 +5,7 @@ RUN apt update && \
     apt install -y shellcheck
 
 RUN echo '#!/usr/bin/env bash\n\
+shopt -s dotglob\n\
 for f in $(ls /srv/crucible/bash/**/*)\n\
 do\n\
 if [ -f $f ]; then shellcheck $f -x -s bash; fi\n\
