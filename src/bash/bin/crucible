@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.2.0
-CRUCIBLE_LOCATION=v0.2.0
+CRUCIBLE_VERSION=0.2.1
+CRUCIBLE_LOCATION=v0.2.1
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
@@ -92,6 +92,7 @@ function update {
 	sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
 	sed -i .crucible -e "s/^location=.*$/location=${CRUCIBLE_LOCATION//\//\\\/}/g"
 	cp .crucible "$share_dir/crucible/$UUID/.crucible"
+	generate_mould
 }
 
 function purge {

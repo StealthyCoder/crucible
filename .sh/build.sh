@@ -37,11 +37,13 @@ function fix_location {
 function fix_versions {
     for shell in "${shells[@]}"
     do
+        shopt -s dotglob
         for f in ../src/"$shell"/**/*
         do
             sed -i -e "s/{CRUCIBLE_VERSION}/$NEW_VERSION/" "$f"
             sed -i -e "s/{CRUCIBLE_CREATED}/$(date +%s)/" "$f"
         done
+        shopt -u dotglob
     done
 }
 

@@ -22,7 +22,9 @@ services:
       - ./src:/srv/src
       - ./src/bash/bin/crucible:/bin/crucible
       - ./.sh:/srv/.sh
-  
+    environment:
+        CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
+    
   crucible-test:
     container_name: crucible_test
     build:
