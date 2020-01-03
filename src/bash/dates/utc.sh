@@ -28,3 +28,23 @@ function dates.utc.rfc3339.date {
 function dates.utc.email {
     date -u --rfc-email
 }
+
+function dates.utc.iso8601.ns {
+    date -u --iso-8601=ns
+}
+
+function dates.utc.is8601.seconds {
+    date -u --iso-8601=seconds
+}
+
+function dates.utc.iso8601.minutes {
+    date -u --iso-8601=minutes
+}
+
+function dates.utc.iso8601.hours {
+    date -u --iso-8601=hours
+}
+
+function dates.utc.iso8601.date {
+    date -u --iso-8601=date
+}

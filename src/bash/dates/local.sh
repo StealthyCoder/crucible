@@ -28,3 +28,23 @@ function dates.local.rfc3339.date {
 function dates.local.email {
     date --rfc-email
 }
+
+function dates.local.iso8601.ns {
+    date --iso-8601=ns
+}
+
+function dates.local.is8601.seconds {
+    date --iso-8601=seconds
+}
+
+function dates.local.iso8601.minutes {
+    date --iso-8601=minutes
+}
+
+function dates.local.iso8601.hours {
+    date --iso-8601=hours
+}
+
+function dates.local.iso8601.date {
+    date --iso-8601=date
+}

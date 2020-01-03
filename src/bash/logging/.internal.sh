@@ -15,22 +15,22 @@ function _echo {
 function _format {
     case $1 in
         INFO)
-            _echo "$(__cyan)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         DEBUG)
-            _echo "$(__blue)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__blue)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         WARNING)
-            _echo "$(__yellow)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__yellow)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         ERROR)
-            _echo "$(__red)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__red)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         SUCCESS)
-            _echo "$(__green)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__green)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         *)
-            _echo "$(__cyan)[ $1 ] $(dates.utc.rfc3339.ns) $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
     esac
 }
