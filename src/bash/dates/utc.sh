@@ -69,7 +69,7 @@ function dates.utc.iso8601.ns {
     fi
 }
 
-function dates.utc.is8601.seconds {
+function dates.utc.iso8601.seconds {
     if [ -z "$1" ]
     then
         date -u --iso-8601=seconds
