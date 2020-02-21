@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.2.1
-CRUCIBLE_LOCATION=${CRUCIBLE_LOCATION:-develop}
+CRUCIBLE_VERSION=0.2.2
+CRUCIBLE_LOCATION=v0.2.2
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
