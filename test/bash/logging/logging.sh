@@ -51,8 +51,15 @@ function logging.logging.info {
     intro "logging.logging.info"
     local msg
     msg="$(logging.info Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[38;5;86m[ INFO ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[38;5;86m\\[ INFO \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
+    
 }
 
 function logging.logging.debug {
@@ -63,8 +70,15 @@ function logging.logging.debug {
 
     logging.set_level "$(logging.level.debug)"
     msg="$(logging.debug Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[34m[ DEBUG ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[34m\\[ DEBUG \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
+    
     unset CRUCIBLE_LOGGING_LEVEL
 }
 
@@ -72,8 +86,14 @@ function logging.logging.error {
     intro "logging.logging.error"
     local msg
     msg="$(logging.error Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[38;5;196m[ ERROR ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[38;5;196m\\[ ERROR \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
 }
 
 function logging.logging.warning {
@@ -84,8 +104,15 @@ function logging.logging.warning {
 
     logging.set_level "$(logging.level.warning)"
     msg="$(logging.warning Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[93m[ WARNING ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[93m\\[ WARNING \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
+    
     unset CRUCIBLE_LOGGING_LEVEL
 }
 
@@ -93,24 +120,44 @@ function logging.logging.success {
     intro "logging.logging.success"
     local msg
     msg="$(logging.success Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[38;5;82m[ SUCCESS ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[38;5;82m\\[ SUCCESS \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
+    
 }
 
 function logging.logging.message {
     intro "logging.logging.message"
     local msg
     msg="$(logging.message Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[38;5;86m[ INFO ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[38;5;86m\\[ INFO \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
+    
 }
 
 function logging.logging.log {
     intro "logging.logging.log"
     local msg
     msg="$(logging.log Cookie | tr -d -C '[:print:]')"
-    test "$msg" = "[38;5;86m[ INFO ] Cookie [0m" || fail "Message was wrong format $msg"
-    success
+    pattern="\\[38;5;86m\\[ INFO \\] .* Cookie \\[0m"
+    
+    if [[ "$msg" =~ $pattern ]]
+    then
+        success
+    else
+        fail "Message was wrong format $msg"
+    fi
 }
 
 echo "Testing logging/logging"
