@@ -52,9 +52,12 @@ By running the following command you get a nice clean environment in which `cruc
 
 ## Core
 
-- [ ] Dates
+- [X] Dates
 - [X] Logging
 - [X] Arrays
+- [ ] File I/O
+- [ ] Network I/O
+- [ ] Processes
 
 # Static Code Analysis
 
