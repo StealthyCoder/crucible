@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 ### CRUCIBLE META DATA ###
-# CRUCIBLE_VERSION=0.2.1
+# CRUCIBLE_VERSION=0.2.2
 # CRUCIBLE_AUTHOR=StealthyCoder
-# CRUCIBLE_CREATED=1578009741
+# CRUCIBLE_CREATED=1582286436
 ### CRUCIBLE META DATA ###
 
 require logging/.constants
+require dates/utc
 
 function _echo {
     echo -e "$1"
@@ -14,22 +15,22 @@ function _echo {
 function _format {
     case $1 in
         INFO)
-            _echo "$(__cyan)[ $1 ] $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         DEBUG)
-            _echo "$(__blue)[ $1 ] $2 $(__reset)"
+            _echo "$(__blue)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         WARNING)
-            _echo "$(__yellow)[ $1 ] $2 $(__reset)"
+            _echo "$(__yellow)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         ERROR)
-            _echo "$(__red)[ $1 ] $2 $(__reset)"
+            _echo "$(__red)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         SUCCESS)
-            _echo "$(__green)[ $1 ] $2 $(__reset)"
+            _echo "$(__green)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
         *)
-            _echo "$(__cyan)[ $1 ] $2 $(__reset)"
+            _echo "$(__cyan)[ $1 ] $(dates.utc.iso8601.ns) $2 $(__reset)"
             ;;
     esac
 }
