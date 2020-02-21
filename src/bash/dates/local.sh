@@ -75,7 +75,7 @@ function dates.local.iso8601.ns {
     
 }
 
-function dates.local.is8601.seconds {
+function dates.local.iso8601.seconds {
     if [ -z "$1" ]
     then
         date --iso-8601=seconds
