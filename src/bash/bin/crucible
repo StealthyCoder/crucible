@@ -130,6 +130,8 @@ function pour {
   if [ ! -d "dist" ]
   then
     mkdir dist
+  else
+    rm dist/*
   fi
 
   touch "$temp_dir/.lib" 
