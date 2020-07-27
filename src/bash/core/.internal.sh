@@ -41,7 +41,14 @@ function __verify_if_arg_is_array {
 function __check_if_arg_is_local_array {
     if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -a\ "$1" ]]
     then
-        logging.warning "Argument was not a local declared array"
+        return 1
+    fi
+    return 0
+}
+
+function __verify_arg_is_function {
+    if [ "$(typeset -f | grep -c "$1 ()" )" -eq 0 ]
+    then
         return 1
     fi
     return 0

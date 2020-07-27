@@ -19,6 +19,7 @@ tests+=("arrays.arrays.get" "arrays.arrays.pop")
 tests+=("arrays.arrays.values")
 tests+=("arrays.arrays.entries")
 tests+=("arrays.arrays.clear")
+tests+=("arrays.arrays.map")
 
 function arrays.arrays.transform_into_array {
     intro "arrays.arrays.transform_into_array"
@@ -176,6 +177,37 @@ function arrays.arrays.clear {
     arrays.clear a
     __verify_nr_args "${#a[@]}" 0 arrays.arrays.clear
     test $? -eq 0 || fail "Array not cleared"
+
+    success
+}
+
+function arrays.arrays.map {
+    intro "arrays.arrays.map"
+    
+    local b
+    arrays.transform_into_array "a"
+
+    arrays.add_all a 1 2 3 4
+    
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "1 2 3 4" || fail "Array is not filled correctly"
+
+    function multiply_by_2 {
+        local result
+        result="$(($1 * 2))"
+        echo "$result"
+    }
+
+    arrays.map a multiply_by_2
+
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "2 4 6 8" || fail "Array is not filled correctly"
 
     success
 }
