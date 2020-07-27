@@ -30,12 +30,7 @@ function arrays.add {
         eval "$print"
         element="$2"   
         arr+=("$element")
-        if __check_if_arg_is_local_array "$1"
-        then
-            print="$(declare -p arr | sed -e "s/declare -a arr=/declare -a $1=/" )"
-        else
-            print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
-        fi
+        print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
         eval "$print"
     fi
 
@@ -133,6 +128,7 @@ function arrays.values {
     then
 
         local arr print
+        
         if __check_if_arg_is_local_array "$1"
         then
             print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
