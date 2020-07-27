@@ -16,9 +16,11 @@ function text.replace_char_with {
 function text.split_by_char {
     __verify_nr_args "$#" 2 text.split_by_char
     local -a result
+    # shellcheck disable=SC2034
+    result=()
     for value in $(text.replace_char_with "$1" "$2" " ")
     do
         arrays.add result "$value"
     done
-    echo "$result"
+    arrays.values result
 }

@@ -21,11 +21,21 @@ function arrays.add {
     if __verify_if_arg_is_array "$1"
     then
         local arr element print
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
-        element="$2"        
-        arr+=("$element")    
-        print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+        element="$2"   
+        arr+=("$element")
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p arr | sed -e "s/declare -a arr=/declare -a $1=/" )"
+        else
+            print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+        fi
         eval "$print"
     fi
 
@@ -123,7 +133,12 @@ function arrays.values {
     then
 
         local arr print
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         echo "${arr[@]}"
     fi
