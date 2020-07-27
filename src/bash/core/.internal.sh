@@ -28,7 +28,20 @@ function __verify_nr_args {
 function __verify_if_arg_is_array {
     if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -ax\ "$1"= ]]
     then
-        logging.error "Argument needs to be an array created by arrays.transform_into_array"
+        if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -a\ "$1" ]]
+        then
+            logging.error "Argument needs to be an array created by arrays.transform_into_array"
+            logging.error "$(declare -p "$1")"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+function __check_if_arg_is_local_array {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -a\ "$1" ]]
+    then
+        logging.warning "Argument was not a local declared array"
         return 1
     fi
     return 0

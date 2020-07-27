@@ -159,7 +159,7 @@ function arrays.arrays.entries {
     test $? -eq 0 || fail "Could not get from array"
     
     b="$(echo "$b" | tr -d "[:cntrl:]")"
-    test "$b" = "Index: 0, Value: 1Index: 1, Value: 2" || fail "Did not get correct element"
+    test "$b" = "0,11,2" || fail "Did not get correct element"
 
     success
 }

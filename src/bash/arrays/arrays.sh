@@ -21,10 +21,15 @@ function arrays.add {
     if __verify_if_arg_is_array "$1"
     then
         local arr element print
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
-        element="$2"        
-        arr+=("$element")    
+        element="$2"   
+        arr+=("$element")
         print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
         eval "$print"
     fi
@@ -39,7 +44,12 @@ function arrays.add_all {
     if __verify_if_arg_is_array "$1"
     then
         local arr element print export_name
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         export_name="$1"
         shift
@@ -81,7 +91,12 @@ function arrays.get {
     if __verify_if_arg_is_array "$1"
     then
         local arr element print
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         echo "${arr[$2]}"
     fi
@@ -93,7 +108,12 @@ function arrays.pop {
         local arr last element print size counter
         local -a target
         target=()
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         if [ "${#arr[@]}" -le 0 ]
         then
@@ -123,7 +143,13 @@ function arrays.values {
     then
 
         local arr print
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         echo "${arr[@]}"
     fi
@@ -134,7 +160,12 @@ function arrays.entries {
     then
 
         local arr print size counter
-        print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        if __check_if_arg_is_local_array "$1"
+        then
+            print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/" )"
+        else
+            print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/" )"
+        fi
         eval "$print"
         if [ "${#arr[@]}" -le 0 ]
         then
@@ -145,7 +176,7 @@ function arrays.entries {
         counter=0
         while test "$counter" -ne "$size"
         do
-            echo "Index: $counter, Value: ${arr[$counter]}"
+            echo "$counter,${arr[$counter]}"
             counter="$((counter + 1))"
         done
     fi
