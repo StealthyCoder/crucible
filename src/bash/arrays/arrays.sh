@@ -189,3 +189,20 @@ function arrays.clear {
         arrays.transform_into_array "$1"
     fi
 }
+
+function arrays.map {
+    __verify_nr_args "$#" 2 arrays.map
+    __verify_arg_is_function "$2"
+    if __verify_if_arg_is_array "$1"
+    then
+        local -a arr
+        local result
+        arr=()
+        for value in $(array.values "$1")
+        do
+            result=$("$2" "$value")
+            arr+=("$result")
+        done
+        echo "${arr[@]}"
+    fi
+}
