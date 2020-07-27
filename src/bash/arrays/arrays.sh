@@ -196,13 +196,14 @@ function arrays.map {
     if __verify_if_arg_is_array "$1"
     then
         local -a arr
-        local result
+        local result print
         arr=()
         for value in $(arrays.values "$1")
         do
             result=$("$2" "$value")
             arr+=("$result")
         done
-        echo "${arr[@]}"
+        print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+        eval "$print"
     fi
 }
