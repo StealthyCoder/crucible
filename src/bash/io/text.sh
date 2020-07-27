@@ -9,5 +9,5 @@ require core/.internal
 
 function text.split_by_char {
     __verify_nr_args "$#" 2 text.split_by_char
-    echo "$1 | sed -e 's/$2/ /g'"
+    echo "${1//$2/ }"
 }
