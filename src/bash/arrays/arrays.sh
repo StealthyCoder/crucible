@@ -145,7 +145,7 @@ function arrays.entries {
         counter=0
         while test "$counter" -ne "$size"
         do
-            echo "Index: $counter, Value: ${arr[$counter]}"
+            echo "$counter ${arr[$counter]}\\n"
             counter="$((counter + 1))"
         done
     fi
