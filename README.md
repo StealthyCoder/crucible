@@ -55,6 +55,8 @@ By running the following command you get a nice clean environment in which `cruc
 - [X] Dates
 - [X] Logging
 - [X] Arrays
+- [ ] Text I/O
+- [ ] Binary I/O
 - [ ] File I/O
 - [ ] Network I/O
 - [ ] Processes
