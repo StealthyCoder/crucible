@@ -48,7 +48,7 @@ function __check_if_arg_is_local_array {
 }
 
 function __verify_arg_is_function {
-    if [ "$(typeset -f | grep -c \\"$1 ()\\" )" -eq 0 ]
+    if [ "$(typeset -f | grep -c "$1 ()" )" -eq 0 ]
     then
         return 1
     fi

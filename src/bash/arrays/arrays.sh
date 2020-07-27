@@ -198,7 +198,7 @@ function arrays.map {
         local -a arr
         local result
         arr=()
-        for value in $(array.values "$1")
+        for value in $(arrays.values "$1")
         do
             result=$("$2" "$value")
             arr+=("$result")
