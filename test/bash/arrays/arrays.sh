@@ -19,6 +19,8 @@ tests+=("arrays.arrays.get" "arrays.arrays.pop")
 tests+=("arrays.arrays.values")
 tests+=("arrays.arrays.entries")
 tests+=("arrays.arrays.clear")
+tests+=("arrays.arrays.map")
+tests+=("arrays.arrays.foreach")
 
 function arrays.arrays.transform_into_array {
     intro "arrays.arrays.transform_into_array"
@@ -159,7 +161,7 @@ function arrays.arrays.entries {
     test $? -eq 0 || fail "Could not get from array"
     
     b="$(echo "$b" | tr -d "[:cntrl:]")"
-    test "$b" = "Index: 0, Value: 1Index: 1, Value: 2" || fail "Did not get correct element"
+    test "$b" = "0,11,2" || fail "Did not get correct element"
 
     success
 }
@@ -176,6 +178,69 @@ function arrays.arrays.clear {
     arrays.clear a
     __verify_nr_args "${#a[@]}" 0 arrays.arrays.clear
     test $? -eq 0 || fail "Array not cleared"
+
+    success
+}
+
+function arrays.arrays.map {
+    intro "arrays.arrays.map"
+    
+    local b
+    arrays.transform_into_array "a"
+
+    arrays.add_all a 1 2 3 4
+    
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "1 2 3 4" || fail "Array is not filled correctly"
+
+    function multiply_by_2 {
+        local result
+        result="$(($1 * 2))"
+        echo "$result"
+    }
+
+    arrays.map a multiply_by_2
+
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "2 4 6 8" || fail "Array is not filled correctly"
+
+    arrays.clear a
+
+    success
+}
+
+function arrays.arrays.foreach {
+    intro "arrays.arrays.foreach"
+    
+    local b counter
+    arrays.transform_into_array "a"
+
+    arrays.add_all a 1 2 3 4
+    
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "1 2 3 4" || fail "Array is not filled correctly, $b"
+
+    function simple_msg {
+        echo "simple,$1"
+    }
+
+    b=$(arrays.foreach a simple_msg)
+    test $? -eq 0 || fail "Could not get from array"
+    counter=1
+    for msg in $b
+    do
+        test "$msg" = "simple,$counter" || fail "Array is not filled correctly, $msg"
+        counter="$((counter + 1))"
+    done
 
     success
 }

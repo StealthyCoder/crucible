@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 ### CRUCIBLE META DATA ###
-# CRUCIBLE_VERSION=0.2.3
+# CRUCIBLE_VERSION=0.2.4
 # CRUCIBLE_AUTHOR=StealthyCoder
-# CRUCIBLE_CREATED=1584529915
+# CRUCIBLE_CREATED=1595942526
 ### CRUCIBLE META DATA ###
 
 require logging/logging
@@ -28,7 +28,27 @@ function __verify_nr_args {
 function __verify_if_arg_is_array {
     if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -ax\ "$1"= ]]
     then
-        logging.error "Argument needs to be an array created by arrays.transform_into_array"
+        if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -a\ "$1" ]]
+        then
+            logging.error "Argument needs to be an array created by arrays.transform_into_array"
+            logging.error "$(declare -p "$1")"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+function __check_if_arg_is_local_array {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -a\ "$1" ]]
+    then
+        return 1
+    fi
+    return 0
+}
+
+function __verify_arg_is_function {
+    if [ "$(typeset -f | grep -c "$1 ()" )" -eq 0 ]
+    then
         return 1
     fi
     return 0

@@ -24,6 +24,7 @@ services:
       - ./.sh:/srv/.sh
     environment:
         CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
+        CRUCIBLE_LOGGING_LEVEL: WARNING
     
   crucible-test:
     container_name: crucible_test

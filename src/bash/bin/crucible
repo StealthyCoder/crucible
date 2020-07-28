@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-CRUCIBLE_VERSION=0.2.3
-CRUCIBLE_LOCATION=v0.2.3
+CRUCIBLE_VERSION=0.2.4
+CRUCIBLE_LOCATION=v0.2.4
 
 function get_uuid {
 	grep 'id' .crucible | cut -d'=' -f 2
@@ -138,20 +138,23 @@ function pour {
   
   cd "$share_dir" || exit 1
   
-  shopt -s globstar
+  shopt -s globstar dotglob
   for f in ./**/*
   do
     if [ ! -d "$f" ]
     then
-      t="$(mktemp)"
-      cat "$f" > "$t"
-      sed -i '/^require/d' "$t"
-      sed -i '/^\#/d' "$t"
-      cat "$t" >> "$temp_dir/.lib"
-      rm "$t"
+		if [ ! "$f" == ".crucible" ]
+		then 	
+			t="$(mktemp)"
+			cat "$f" > "$t"
+			sed -i '/^require/d' "$t"
+			sed -i '/^\#/d' "$t"
+			cat "$t" >> "$temp_dir/.lib"
+			rm "$t"
+		fi
     fi
   done
-  shopt -u globstar
+  shopt -u globstar dotglob
   
   cd "$cur_dir" || exit 1
   t="$(mktemp)"
@@ -164,7 +167,7 @@ function pour {
   
   cd "$temp_dir" || exit 1
   tar cf "$project_name.tar.gz" .lib "$main_file"
-  mv "$project_name.tar.gz" "$cur_dir/"
+  mv "$project_name.tar.gz" "$cur_dir/dist/"
   
   cd "$cur_dir" || return
   rm -r "$temp_dir"
