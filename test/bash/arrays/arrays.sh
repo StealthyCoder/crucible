@@ -20,6 +20,7 @@ tests+=("arrays.arrays.values")
 tests+=("arrays.arrays.entries")
 tests+=("arrays.arrays.clear")
 tests+=("arrays.arrays.map")
+tests+=("arrays.arrays.foreach")
 
 function arrays.arrays.transform_into_array {
     intro "arrays.arrays.transform_into_array"
@@ -208,6 +209,38 @@ function arrays.arrays.map {
     test $? -eq 0 || fail "Could not get from array"
     
     test "$b" = "2 4 6 8" || fail "Array is not filled correctly"
+
+    arrays.clear a
+
+    success
+}
+
+function arrays.arrays.foreach {
+    intro "arrays.arrays.foreach"
+    
+    local b counter
+    arrays.transform_into_array "a"
+
+    arrays.add_all a 1 2 3 4
+    
+    b="$(arrays.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    test "$b" = "1 2 3 4" || fail "Array is not filled correctly, $b"
+
+    function simple_msg {
+        echo "simple,$1"
+    }
+
+    b=$(arrays.foreach a simple_msg)
+    test $? -eq 0 || fail "Could not get from array"
+    counter=1
+    for msg in $b
+    do
+        test "$msg" = "simple,$counter" || fail "Array is not filled correctly, $msg"
+        counter="$((counter + 1))"
+    done
 
     success
 }
