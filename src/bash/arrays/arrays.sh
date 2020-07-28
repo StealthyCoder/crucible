@@ -207,3 +207,15 @@ function arrays.map {
         eval "$print"
     fi
 }
+
+function arrays.foreach {
+    __verify_nr_args "$#" 2 arrays.map
+    __verify_arg_is_function "$2"
+    if __verify_if_arg_is_array "$1"
+    then
+        for value in $(arrays.values "$1")
+        do
+            "$2" "$value"
+        done
+    fi
+}
