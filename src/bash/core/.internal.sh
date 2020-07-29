@@ -53,3 +53,24 @@ function __verify_arg_is_function {
     fi
     return 0
 }
+
+function __verify_if_arg_is_map {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -Ax\ "$1"= ]]
+    then
+        if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -A\ "$1" ]]
+        then
+            logging.error "Argument needs to be a map created by maps.transform_into_map"
+            logging.error "$(declare -p "$1")"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+function __check_if_arg_is_local_map {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -A\ "$1" ]]
+    then
+        return 1
+    fi
+    return 0
+}
