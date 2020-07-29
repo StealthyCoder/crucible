@@ -20,7 +20,9 @@ tests+=("maps.maps.values")
 tests+=("maps.maps.keys")
 tests+=("maps.maps.entries")
 tests+=("maps.maps.clear")
-# tests+=("arrays.arrays.map")
+tests+=("maps.maps.contains_key")
+tests+=("maps.maps.contains_value")
+tests+=("maps.maps.map")
 # tests+=("arrays.arrays.foreach")
 
 function maps.maps.transform_into_map {
@@ -184,7 +186,7 @@ function maps.maps.entries {
     test $? -eq 0 || fail "Could not get from array"
     
     b="$(echo "$b" | tr -d "[:cntrl:]")"
-    echo "$b"
+    
     test "$b" = "k,va,1" || fail "Did not get correct element"
 
     success
@@ -206,38 +208,70 @@ function maps.maps.clear {
     success
 }
 
-# function arrays.arrays.map {
-#     intro "arrays.arrays.map"
+function maps.maps.contains_key {
+    intro "maps.maps.contains_key"
     
-#     local b
-#     arrays.transform_into_array "a"
-
-#     arrays.add_all a 1 2 3 4
+    maps.transform_into_map a
     
-#     b="$(arrays.values a)"
-
-#     test $? -eq 0 || fail "Could not get from array"
+    maps.put_all a k v a 1
+    maps.contains_key a k
     
-#     test "$b" = "1 2 3 4" || fail "Array is not filled correctly"
-
-#     function multiply_by_2 {
-#         local result
-#         result="$(($1 * 2))"
-#         echo "$result"
-#     }
-
-#     arrays.map a multiply_by_2
-
-#     b="$(arrays.values a)"
-
-#     test $? -eq 0 || fail "Could not get from array"
+    test $? -eq 0 || fail "Map should contain key"
     
-#     test "$b" = "2 4 6 8" || fail "Array is not filled correctly"
+    maps.contains_key a c
+    
+    test $? -eq 1 || fail "Map should not contain key"
 
-#     arrays.clear a
+    success
+}
 
-#     success
-# }
+function maps.maps.contains_value {
+    intro "maps.maps.contains_value"
+    
+    maps.transform_into_map a
+    
+    maps.put_all a k v a 1
+    maps.contains_value a v
+    
+    test $? -eq 0 || fail "Map should contain value"
+    
+    maps.contains_value a 2
+    
+    test $? -eq 1 || fail "Map should not contain value"
+
+    success
+}
+
+function maps.maps.map {
+    intro "maps.maps.map"
+    
+    local b
+    maps.transform_into_map a
+
+    maps.put_all a k v a 1
+    
+    b="$(maps.values a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    function add_k_v {
+        echo "$1k,$2v"
+    }
+
+    maps.map a add_k_v
+
+    b="$(maps.entries a)"
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    b="$(echo "$b" | tr -d "[:cntrl:]")"
+    
+    test "$b" = "kk,vvak,1v" || fail "Did not get correct element"
+
+    maps.clear a
+
+    success
+}
 
 # function arrays.arrays.foreach {
 #     intro "arrays.arrays.foreach"

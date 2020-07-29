@@ -7,6 +7,7 @@
 
 require core/.internal
 require logging/logging
+require io/text
 
 function maps.transform_into_map {
     local -A arr
@@ -220,5 +221,25 @@ function maps.clear {
     if __verify_if_arg_is_map "$1"
     then
         maps.transform_into_map "$1"
+    fi
+}
+
+function maps.map {
+    __verify_nr_args "$#" 2 map.map
+    __verify_arg_is_function "$2"
+    if __verify_if_arg_is_map "$1"
+    then
+        local -A arr
+        local result print
+        arr=()
+        for keypair in $(maps.entries "$1")
+        do
+            read key value <<< "$( text.split_by_char "$keypair" "," )"
+            result=$("$2" "$key" "$value")
+            read key value <<< "$( text.split_by_char "$result" "," )"
+            arr+=(["$key"]="$value")
+        done
+        print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/" )"
+        eval "$print"
     fi
 }
