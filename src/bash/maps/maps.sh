@@ -185,20 +185,6 @@ function maps.contains_key {
     __verify_nr_args "$#" 2 maps.contains_key
     if __verify_if_arg_is_map "$1"
     then
-        local keys
-        keys="$(maps.keys "$1")"
-        if [ "$(echo "$keys" | grep -c "$2" )" -ge 1 ]
-        then
-            return 0 
-        fi
-        return 1
-    fi
-}
-
-function maps.contains_value {
-    __verify_nr_args "$#" 2 maps.contains_value
-    if __verify_if_arg_is_map "$1"
-    then
         local arr
         if __check_if_arg_is_local_map "$1"
         then
@@ -209,6 +195,21 @@ function maps.contains_value {
         eval "$print"
 
         if [ ${arr[$2]+_} ]
+        then
+            return 0 
+        fi
+        return 1
+        
+    fi
+}
+
+function maps.contains_value {
+    __verify_nr_args "$#" 2 maps.contains_value
+    if __verify_if_arg_is_map "$1"
+    then
+        local values
+        values="$(maps.values "$1")"
+        if [ "$(echo "$values" | grep -c "$2" )" -ge 1 ]
         then
             return 0 
         fi
