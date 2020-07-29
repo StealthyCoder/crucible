@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 ### CRUCIBLE META DATA ###
-# CRUCIBLE_VERSION=0.2.4
+# CRUCIBLE_VERSION=0.2.5
 # CRUCIBLE_AUTHOR=StealthyCoder
-# CRUCIBLE_CREATED=1595942526
+# CRUCIBLE_CREATED=1596058258
 ### CRUCIBLE META DATA ###
 
 require logging/logging
@@ -48,6 +48,27 @@ function __check_if_arg_is_local_array {
 
 function __verify_arg_is_function {
     if [ "$(typeset -f | grep -c "$1 ()" )" -eq 0 ]
+    then
+        return 1
+    fi
+    return 0
+}
+
+function __verify_if_arg_is_map {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -Ax\ "$1"= ]]
+    then
+        if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -A\ "$1" ]]
+        then
+            logging.error "Argument needs to be a map created by maps.transform_into_map"
+            logging.error "$(declare -p "$1")"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+function __check_if_arg_is_local_map {
+    if [[ ! "$(declare -p "$1" 2>/dev/null)" =~ ^declare\ -A\ "$1" ]]
     then
         return 1
     fi
