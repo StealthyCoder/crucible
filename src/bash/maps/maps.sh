@@ -122,7 +122,6 @@ function maps.remove {
         eval "$print"
         unset arr["$2"]
         print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/" )"
-        declare -p arr
         eval "$print"
     fi
 }
@@ -214,5 +213,12 @@ function maps.contains_value {
             return 0 
         fi
         return 1
+    fi
+}
+
+function maps.clear {
+    if __verify_if_arg_is_map "$1"
+    then
+        maps.transform_into_map "$1"
     fi
 }
