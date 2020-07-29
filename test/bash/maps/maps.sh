@@ -23,7 +23,7 @@ tests+=("maps.maps.clear")
 tests+=("maps.maps.contains_key")
 tests+=("maps.maps.contains_value")
 tests+=("maps.maps.map")
-# tests+=("arrays.arrays.foreach")
+tests+=("maps.maps.foreach")
 
 function maps.maps.transform_into_map {
     intro "maps.maps.transform_into_map"
@@ -277,10 +277,20 @@ function maps.maps.foreach {
     intro "maps.maps.foreach"
     
     local b counter
+    local -a keys
+    local -a values
     maps.transform_into_map a
-
-    maps.put_all a k v a 1
     
+    maps.put_all a k v a 1
+    for key in $(maps.keys a)
+    do
+        keys+=("$key")
+    done
+    for value in $(maps.values a)
+    do
+        values+=("$value")
+    done  
+
     function simple_msg {
         echo "simple,$1,$2"
     }
@@ -288,7 +298,12 @@ function maps.maps.foreach {
     b=$(maps.foreach a simple_msg)
     test $? -eq 0 || fail "Could not get from array"
     
-    echo "$b"
+    counter=0
+    for msg in $b
+    do
+        test "$msg" = "simple,${keys[$counter]},${values[$counter]}" || fail "Array is not filled correctly, $msg"
+        counter="$((counter + 1))"
+    done
 
     success
 }
