@@ -30,7 +30,7 @@ function maps.add {
         eval "$print"
         key="$2"
         value="$3"
-        arr+=(["$key]"="$value")
+        arr+=(["$key"]="$value")
         print="$(declare -p arr | sed -e "s/declare -a arr=/declare -Agx $1=/" )"
         eval "$print"
     fi
