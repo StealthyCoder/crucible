@@ -234,9 +234,9 @@ function maps.map {
         arr=()
         for keypair in $(maps.entries "$1")
         do
-            read key value <<< "$( text.split_by_char "$keypair" "," )"
+            read -r key value <<< "$( text.split_by_char "$keypair" "," )"
             result=$("$2" "$key" "$value")
-            read key value <<< "$( text.split_by_char "$result" "," )"
+            read -r key value <<< "$( text.split_by_char "$result" "," )"
             arr+=(["$key"]="$value")
         done
         print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/" )"
