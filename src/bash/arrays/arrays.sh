@@ -11,7 +11,7 @@ function arrays.transform_into_array {
     local -a arr
     local print
     arr=()
-    print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+    print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/" )"
     eval "$print"
 }
 
@@ -30,7 +30,7 @@ function arrays.add {
         eval "$print"
         element="$2"   
         arr+=("$element")
-        print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+        print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/" )"
         eval "$print"
     fi
 
@@ -60,7 +60,7 @@ function arrays.add_all {
             shift
         done
         
-        print="$(declare -p arr | sed -e "s/declare -a arr=/export $export_name=/" )"
+        print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/" )"
         eval "$print"
     fi
 }
@@ -79,7 +79,7 @@ function arrays.concat {
             do
                 src+=("$element")
             done
-            print="$(declare -p src | sed -e "s/declare -a src=/export $1=/" )"
+            print="$(declare -p src | sed -e "s/declare -a src=/declare -agx $1=/" )"
             eval "$print"
         fi
     fi
@@ -130,7 +130,7 @@ function arrays.pop {
             counter="$((counter + 1))"
         done
 
-        print="$(declare -p target | sed -e "s/declare -a target=/export $1=/" )"
+        print="$(declare -p target | sed -e "s/declare -a target=/declare -agx $1=/" )"
         eval "$print"
 
         eval "export $2=$last"
@@ -203,7 +203,7 @@ function arrays.map {
             result=$("$2" "$value")
             arr+=("$result")
         done
-        print="$(declare -p arr | sed -e "s/declare -a arr=/export $1=/" )"
+        print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/" )"
         eval "$print"
     fi
 }
