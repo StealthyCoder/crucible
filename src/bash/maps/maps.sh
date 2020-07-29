@@ -225,7 +225,7 @@ function maps.clear {
 }
 
 function maps.map {
-    __verify_nr_args "$#" 2 map.map
+    __verify_nr_args "$#" 2 maps.map
     __verify_arg_is_function "$2"
     if __verify_if_arg_is_map "$1"
     then
@@ -241,5 +241,18 @@ function maps.map {
         done
         print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/" )"
         eval "$print"
+    fi
+}
+
+function maps.foreach {
+    __verify_nr_args "$#" 2 maps.map
+    __verify_arg_is_function "$2"
+    if __verify_if_arg_is_map "$1"
+    then
+        for keypair in $(maps.entries "$1")
+        do
+            read -r key value <<< "$( text.split_by_char "$keypair" "," )"
+            "$2" "$key" "$value"
+        done
     fi
 }

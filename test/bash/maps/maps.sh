@@ -265,43 +265,33 @@ function maps.maps.map {
     test $? -eq 0 || fail "Could not get from array"
     
     b="$(echo "$b" | tr -d "[:cntrl:]")"
-    
-    test "$b" = "kk,vvak,1v" || fail "Did not get correct element"
+
+    test "$b" = "ak,1vkk,vv" || fail "Did not get correct element"
 
     maps.clear a
 
     success
 }
 
-# function arrays.arrays.foreach {
-#     intro "arrays.arrays.foreach"
+function maps.maps.foreach {
+    intro "maps.maps.foreach"
     
-#     local b counter
-#     arrays.transform_into_array "a"
+    local b counter
+    maps.transform_into_map a
 
-#     arrays.add_all a 1 2 3 4
+    maps.put_all a k v a 1
     
-#     b="$(arrays.values a)"
+    function simple_msg {
+        echo "simple,$1,$2"
+    }
 
-#     test $? -eq 0 || fail "Could not get from array"
+    b=$(maps.foreach a simple_msg)
+    test $? -eq 0 || fail "Could not get from array"
     
-#     test "$b" = "1 2 3 4" || fail "Array is not filled correctly, $b"
+    echo "$b"
 
-#     function simple_msg {
-#         echo "simple,$1"
-#     }
-
-#     b=$(arrays.foreach a simple_msg)
-#     test $? -eq 0 || fail "Could not get from array"
-#     counter=1
-#     for msg in $b
-#     do
-#         test "$msg" = "simple,$counter" || fail "Array is not filled correctly, $msg"
-#         counter="$((counter + 1))"
-#     done
-
-#     success
-# }
+    success
+}
 
 echo "Testing maps/maps"
 
