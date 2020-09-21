@@ -136,7 +136,7 @@ function pour {
 
   touch "$temp_dir/.lib" 
   
-  cd "$share_dir" || exit 1
+  cd "$share_dir/crucible/$UUID/" || exit 1
   
   shopt -s globstar dotglob
   for f in ./**/*
