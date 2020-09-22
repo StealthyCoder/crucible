@@ -21,6 +21,7 @@ tests+=("arrays.arrays.entries")
 tests+=("arrays.arrays.clear")
 tests+=("arrays.arrays.map")
 tests+=("arrays.arrays.foreach")
+tests+=("arrays.arrays.contains")
 
 function arrays.arrays.transform_into_array {
     intro "arrays.arrays.transform_into_array"
@@ -241,6 +242,21 @@ function arrays.arrays.foreach {
         test "$msg" = "simple,$counter" || fail "Array is not filled correctly, $msg"
         counter="$((counter + 1))"
     done
+
+    success
+}
+
+function arrays.arrays.contains {
+    intro "arrays.arrays.contains"
+       
+    arrays.transform_into_array a
+    
+    arrays.add_all a 1 2
+
+    test $? -eq 0 || fail "Could not get from array"
+    
+    arrays.contains a 1
+    test $? -eq 0 || fail "Array should contain value"
 
     success
 }

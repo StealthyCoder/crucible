@@ -7,7 +7,7 @@
 
 require core/.internal
 require logging/logging
-require io/text
+require strings/strings
 
 function maps.transform_into_map {
     local -A arr
@@ -185,7 +185,7 @@ function maps.contains_key {
     __verify_nr_args "$#" 2 maps.contains_key
     if __verify_if_arg_is_map "$1"
     then
-        local arr
+        local arr result
         if __check_if_arg_is_local_map "$1"
         then
             print="$(declare -p "$1" | sed -e "s/declare -A $1=/declare -A arr=/" )"
@@ -196,9 +196,11 @@ function maps.contains_key {
 
         if [ ${arr[$2]+_} ]
         then
-            return 0 
+            result=1
+        else
+            result=0 
         fi
-        return 1
+        __to_boolean "$result" "==" 1
         
     fi
 }
@@ -207,13 +209,15 @@ function maps.contains_value {
     __verify_nr_args "$#" 2 maps.contains_value
     if __verify_if_arg_is_map "$1"
     then
-        local values
+        local values result
         values="$(maps.values "$1")"
         if [ "$(echo "$values" | grep -c "$2" )" -ge 1 ]
         then
-            return 0 
+            result=1
+        else
+            result=0
         fi
-        return 1
+        __to_boolean "$result" "==" 1
     fi
 }
 
@@ -234,9 +238,9 @@ function maps.map {
         arr=()
         for keypair in $(maps.entries "$1")
         do
-            read -r key value <<< "$( text.split_by_char "$keypair" "," )"
+            read -r key value <<< "$( strings.split_by_char "$keypair" "," )"
             result=$("$2" "$key" "$value")
-            read -r key value <<< "$( text.split_by_char "$result" "," )"
+            read -r key value <<< "$( strings.split_by_char "$result" "," )"
             arr+=(["$key"]="$value")
         done
         print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/" )"
@@ -251,7 +255,7 @@ function maps.foreach {
     then
         for keypair in $(maps.entries "$1")
         do
-            read -r key value <<< "$( text.split_by_char "$keypair" "," )"
+            read -r key value <<< "$( strings.split_by_char "$keypair" "," )"
             "$2" "$key" "$value"
         done
     fi
