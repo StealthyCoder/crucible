@@ -74,3 +74,54 @@ function __check_if_arg_is_local_map {
     fi
     return 0
 }
+
+function __get_operator {
+    __verify_nr_args "$#" 1 __get_operator
+    local -A operators
+    operators=()
+    
+    operators+=(["<"]="-lt")
+    operators+=(["<="]="-le")
+    operators+=([">"]="-gt")
+    operators+=([">="]="-ge")
+    operators+=(["=="]="-eq")
+    operators+=(["!="]="-ne")
+    if [ ! ${operators[$1]+_} ]
+    then
+        logging.error "Argument needs to be >,>=,<,<=,==,!= was $1"
+    fi
+    echo "${operators[$1]}"
+}
+
+
+function __to_boolean {
+    __verify_nr_args "$#" 3 __to_boolean
+    local operator result
+    operator=$(__get_operator "$2")
+    if [ "$operator" == "-lt" ]
+    then
+        result=$(if [[ "$1" -lt "$3" ]]; then echo 1; else echo 0; fi)
+    elif [ "$operator" == "-le" ]
+    then
+        result=$(if [[ "$1" -le "$3" ]]; then echo 1; else echo 0; fi)
+    elif [ "$operator" == "-gt" ]
+    then
+        result=$(if [[ "$1" -gt "$3" ]]; then echo 1; else echo 0; fi)
+    elif [ "$operator" == "-ge" ]
+    then
+        result=$(if [[ "$1" -ge "$3" ]]; then echo 1; else echo 0; fi)
+    elif [ "$operator" == "-eq" ]
+    then
+        result=$(if [[ "$1" -eq "$3" ]]; then echo 1; else echo 0; fi)
+    elif [ "$operator" == "-ne" ]
+    then
+        result=$(if [[ "$1" -ne "$3" ]]; then echo 1; else echo 0; fi)
+    fi
+    
+    if [[ "$result" -eq 1 ]]
+    then
+        true
+    else 
+        false
+    fi
+}

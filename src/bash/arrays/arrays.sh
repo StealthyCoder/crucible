@@ -209,7 +209,7 @@ function arrays.map {
 }
 
 function arrays.foreach {
-    __verify_nr_args "$#" 2 arrays.map
+    __verify_nr_args "$#" 2 arrays.foreach
     __verify_arg_is_function "$2"
     if __verify_if_arg_is_array "$1"
     then
@@ -217,5 +217,21 @@ function arrays.foreach {
         do
             "$2" "$value"
         done
+    fi
+}
+
+function arrays.contains {
+    __verify_nr_args "$#" 2 arrays.contains
+    if __verify_if_arg_is_array "$1"
+    then
+        local values result
+        values="$(arrays.values "$1")"
+        if [ "$(echo "$values" | grep -c "$2" )" -ge 1 ]
+        then
+            result=1
+        else
+            result=0
+        fi
+        __to_boolean "$result" "==" 1
     fi
 }
