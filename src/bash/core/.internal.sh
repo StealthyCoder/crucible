@@ -7,6 +7,23 @@
 
 require logging/logging
 
+function __verify_nr_args {
+    if [ "$#" -ne 3 ]
+    then
+        logging.info "Must pass three arguments to this function."
+        logging.info " 1. Number of arguments gotten"
+        logging.info " 2. Number of arguments expected"
+        logging.info " 3. Name of the function"
+        logging.info " Example: __verify_nr_args 1 1 arrays.dummy"
+        exit 1
+    fi
+    if [ "$1" -ne "$2" ]
+    then
+        logging.error "Need exactly $2 arguments for $3, gotten only $1"
+        exit 1
+    fi
+}
+
 function __get_operator {
     __verify_nr_args "$#" 1 __get_operator
     local -A operators
@@ -55,23 +72,6 @@ function __to_boolean {
         true
     else 
         false
-    fi
-}
-
-function __verify_nr_args {
-    if $(__to_boolean "$#" "!=" 3)
-    then
-        logging.info "Must pass three arguments to this function."
-        logging.info " 1. Number of arguments gotten"
-        logging.info " 2. Number of arguments expected"
-        logging.info " 3. Name of the function"
-        logging.info " Example: __verify_nr_args 1 1 arrays.dummy"
-        exit 1
-    fi
-    if $(__to_boolean "$1" "!=" "$2")
-    then
-        logging.error "Need exactly $2 arguments for $3, gotten only $1"
-        exit 1
     fi
 }
 
