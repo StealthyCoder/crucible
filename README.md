@@ -56,7 +56,8 @@ By running the following command you get a nice clean environment in which `cruc
 - [X] Logging
 - [X] Arrays
 - [X] Maps
-- [ ] Text I/O
+- [x] Strings
+- [ ] Search
 - [ ] Binary I/O
 - [ ] File I/O
 - [ ] Network I/O
