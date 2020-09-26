@@ -57,11 +57,17 @@ By running the following command you get a nice clean environment in which `cruc
 - [X] Arrays
 - [X] Maps
 - [x] Strings
+- [ ] Pipes
+- [ ] Redirect
 - [ ] Search
 - [ ] Binary I/O
 - [ ] File I/O
 - [ ] Network I/O
 - [ ] Processes
+- [ ] Classes
+- [ ] Http
+- [ ] File Cache
+- [ ] Memory Cache
 
 # Static Code Analysis
 
