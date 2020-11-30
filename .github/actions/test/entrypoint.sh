@@ -5,6 +5,6 @@ do
   if [ -f $f ]; 
   then 
     bash $f
-  for
+  fi
 done
 
