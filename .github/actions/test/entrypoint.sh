@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export PATH=$PATH:$PWD/src/$1/bin/crucible
+export PATH=$PATH:$PWD/src/$1/bin
 env | sort
 
 for f in $(ls test/$1/**/*)
