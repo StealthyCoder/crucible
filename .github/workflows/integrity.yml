@@ -1,7 +1,7 @@
 on: [push]
 
 jobs:
-  build:
+  integrity-checks:
     runs-on: ubuntu-20.04
     steps:
       # This step checks out a copy of your repository.
