@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 cd $GITHUB_WORKSPACE
-for f in $(ls $1/**/*)
+
+export PATH=$PATH:$GITHUB_WORKSPACE/src/$1/bin/crucible
+
+for f in $(ls test/$1/**/*)
 do
   if [ -f $f ]; 
   then 
-    bash $f
+    $1 $f
   fi
 done
 
