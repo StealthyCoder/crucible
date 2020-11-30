@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-cd $GITHUB_WORKSPACE
-
-export PATH=$PATH:$GITHUB_WORKSPACE/src/$1/bin/crucible
+export PATH=$PATH:$PWD/src/$1/bin/crucible
+env | sort
 
 for f in $(ls test/$1/**/*)
 do
