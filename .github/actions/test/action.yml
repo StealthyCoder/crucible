@@ -1,0 +1,12 @@
+name: 'Testing'
+description: 'Testing shell scripts'
+inputs:
+  path-to-shell:  # id of input
+    description: 'Where shell is located'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path-to-shell }}
+
