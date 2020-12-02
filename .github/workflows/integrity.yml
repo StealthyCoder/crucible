@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  integrity-checks:
+    runs-on: ubuntu-20.04
+    steps:
+      # This step checks out a copy of your repository.
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: ShellCheck BASH
+        uses: ./.github/actions/shellcheck
+        with:
+          which-shell: bash
+      - name: Test BASH
+        uses: ./.github/actions/test
+        with:
+          which-shell: bash

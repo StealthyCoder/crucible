@@ -1,0 +1,12 @@
+name: 'Testing'
+description: 'Testing shell scripts'
+inputs:
+  which-shell:  # id of input
+    description: 'Which shell to test'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.which-shell }}
+
