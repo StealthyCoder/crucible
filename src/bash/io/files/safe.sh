@@ -36,3 +36,39 @@ function files.move_file {
 function files.move_dir {
     files.rename_dir $*
 }
+
+function files.delete_file {
+    __verify_nr_args "$#" 1 files.delete_file
+    local path
+    path="$1"
+    if [ -f "$path" ]
+    then
+        rm -i "$path"
+    fi
+}
+
+function files.delete_dir {
+    __verify_nr_args "$#" 1 files.delete_dir
+    local path
+    path="$1"
+    if [ -d "$path" ]
+    then
+        rm -di "$path"
+    fi
+}
+
+function files.delete_dir_and_files {
+    __verify_nr_args "$#" 1 files.delete_dir_and_files
+    local path
+    path="$1"
+    if [ -f "$path" ]
+    then
+        files.delete_file "$path"
+    elif [ -d "$path" ]
+    then
+        if [ "$path" != "/" ]
+        then
+            rm -ri "$path"
+        fi
+    fi
+}

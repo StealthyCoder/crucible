@@ -63,7 +63,7 @@ function files.change_dir_history_clear {
 
 function files.list_dir_detailed {
     __verify_nr_args "$#" 1 files.list_dir_detailed
-    local path detailed
+    local path
     path="$1"
     ls -alh "$path"
 }
@@ -74,7 +74,7 @@ function files.list_current_dir_detailed {
 
 function files.list_dir_hidden {
     __verify_nr_args "$#" 1 files.list_dir_hidden
-    local path detailed
+    local path
     path="$1"
     ls -A "$path"
 }
@@ -85,7 +85,7 @@ function files.list_current_dir_hidden {
 
 function files.list_dir {
     __verify_nr_args "$#" 1 files.list_dir
-    local path detailed
+    local path
     path="$1"
     ls "$path"
 }
@@ -102,8 +102,28 @@ function files.move_dir {
     files.rename_dir $*
 }
 
-# delete file
-# delete dir
+function files.delete_file {
+    __verify_nr_args "$#" 1 files.delete_file
+    local path
+    path="$1"
+    rm "$path"
+}
+
+function files.delete_dir {
+    __verify_nr_args "$#" 1 files.delete_dir
+    local path
+    path="$1"
+    rm -d "$path"
+}
+
+function files.delete_dir_and_files {
+    __verify_nr_args "$#" 1 files.delete_dir_and_files
+    local path
+    path="$1"
+    rm -r "$path"
+}
+
+
 # copy file
 # copy directory
 # update files (mv / cp if newer)
