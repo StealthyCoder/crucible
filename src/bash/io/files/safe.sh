@@ -72,3 +72,46 @@ function files.delete_dir_and_files {
         fi
     fi
 }
+
+function files.copy_file {
+    __verify_nr_args "$#" 2 files.copy_file
+    local src target
+    src="$1"
+    target="$2"
+    if [ -f "$src" ]
+    then
+        cp --strip-trailing-slashes --no-target-directory --no-clobber "$src" "$target"
+    fi
+}
+
+function files.copy_dir {
+    __verify_nr_args "$#" 2 files.copy_dir
+    local src target
+    src="$1"
+    target="$2"
+    if [ -d "$src" ]
+    then
+        cp --recursive --strip-trailing-slashes --no-target-directory --no-clobber "$src" "$target"
+    fi
+}
+
+function files.update_file {
+    __verify_nr_args "$#" 2 files.update_file
+    local src target
+    src="$1"
+    target="$2"
+    if [ ! -f "$target" ]
+    then
+        cp --update --strip-trailing-slashes --no-target-directory --no-clobber "$src" "$target"
+    fi
+}
+
+function files.create_file {
+    __verify_nr_args "$#" 1 files.create_file
+    local target
+    target="$1"
+    if [ ! -f "$target" ]
+    then
+        touch "$target"
+    fi
+}

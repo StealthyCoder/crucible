@@ -12,7 +12,7 @@ function files.rename_file {
     local src target
     src="$1"
     target="$2"
-    mv --strip-trailing-slashes -T "$src" "$target"
+    mv --strip-trailing-slashes --no-target-directory "$src" "$target"
 }
 
 function files.rename_dir {
@@ -25,7 +25,7 @@ function files.create_dir {
     local dir path
     dir="$1"
     path="$2"
-    mkdir -p "$path/$dir"
+    mkdir --parents "$path/$dir"
 }
 
 function files.create_dir_local {
@@ -65,7 +65,7 @@ function files.list_dir_detailed {
     __verify_nr_args "$#" 1 files.list_dir_detailed
     local path
     path="$1"
-    ls -alh "$path"
+    ls --all -l --human-readable "$path"
 }
 
 function files.list_current_dir_detailed {
@@ -76,7 +76,7 @@ function files.list_dir_hidden {
     __verify_nr_args "$#" 1 files.list_dir_hidden
     local path
     path="$1"
-    ls -A "$path"
+    ls --almost-all "$path"
 }
 
 function files.list_current_dir_hidden {
@@ -113,23 +113,71 @@ function files.delete_dir {
     __verify_nr_args "$#" 1 files.delete_dir
     local path
     path="$1"
-    rm -d "$path"
+    rm --dir "$path"
 }
 
 function files.delete_dir_and_files {
     __verify_nr_args "$#" 1 files.delete_dir_and_files
     local path
     path="$1"
-    rm -r "$path"
+    rm --recursive "$path"
 }
 
+function files.copy_file {
+    __verify_nr_args "$#" 2 files.copy_file
+    local src target
+    src="$1"
+    target="$2"
+    cp --strip-trailing-slashes --no-target-directory "$src" "$target"
+}
 
-# copy file
-# copy directory
-# update files (mv / cp if newer)
-# create file (touch)
-# file exists
-# dir exists
+function files.copy_dir {
+    __verify_nr_args "$#" 2 files.copy_dir
+    local src target
+    src="$1"
+    target="$2"
+    cp --recursive --strip-trailing-slashes --no-target-directory "$src" "$target"
+}
+
+function files.update_file {
+    __verify_nr_args "$#" 2 files.update_file
+    local src target
+    src="$1"
+    target="$2"
+    cp --update --strip-trailing-slashes --no-target-directory "$src" "$target"
+}
+
+function files.create_file {
+    __verify_nr_args "$#" 1 files.create_file
+    local target
+    target="$1"
+    touch "$target"
+}
+
+function files.file_exists {
+    __verify_nr_args "$#" 1 files.file_exists
+    local target result
+    if [ -f "$target" ]
+    then
+        result=1
+    else
+        result=0
+    fi
+    __to_boolean "$result" "==" 1
+}
+
+function files.dir_exists {
+    __verify_nr_args "$#" 1 files.dir_exists
+    local target result
+    if [ -d "$target" ]
+    then
+        result=1
+    else
+        result=0
+    fi
+    __to_boolean "$result" "==" 1
+}
+
 # file perms
 # file owner
 # 
