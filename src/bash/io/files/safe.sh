@@ -115,3 +115,66 @@ function files.create_file {
         touch "$target"
     fi
 }
+
+function files.file_change_owner_group {
+  __verify_nr_args "$#" 3 files.file_change_owner_group
+  local target owner group result
+  target="$1"
+  owner="$2"
+  group="$3"
+  if [ -f "$target" ]
+  then
+    __sudo chown "$owner:$group" "$target"
+  fi
+}
+
+
+function files.file_change_owner {
+  __verify_nr_args "$#" 2 files.file_change_owner
+  local target owner
+  target="$1"
+  owner="$2"
+  files.file_change_owner_group "$target" "$owner" "$owner"
+}
+
+function files.file_copy_owner {
+  __verify_nr_args "$#" 2 files.file_copy_owner
+  local target reference
+  target="$1"
+  reference="$2"
+  if [ -f "$target" ]
+  then
+    __sudo chown --reference="$reference" "$target"
+  fi
+}
+
+function files.dir_change_owner_group {
+  __verify_nr_args "$#" 3 files.dir_change_owner_group
+  local target owner group
+  target="$1"
+  owner="$2"
+  group="$3"
+  if [ -d "$target" ]
+  then
+    __sudo chown --recursive "$owner:$group" "$target"
+  fi
+}
+
+function files.dir_change_owner {
+  __verify_nr_args "$#" 2 files.dir_change_owner
+  local target owner
+  target="$1"
+  owner="$2"
+  files.dir_change_owner_group "$target" "$owner" "$owner"
+}
+
+function files.dir_copy_owner {
+  __verify_nr_args "$#" 2 files.dir_copy_owner
+  local target reference
+  target="$1"
+  reference="$2"
+  if [ -d "$target" ]
+  then
+    __sudo chown --reference="$reference" --recursive "$target"
+  fi
+}

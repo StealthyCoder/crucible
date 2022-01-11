@@ -135,3 +135,39 @@ function __check_if_arg_is_local_map {
     __to_boolean "$result" "==" 1
 }
 
+function __is_root {
+  local result
+  if [ "$EUID" -eq 0 ]
+  then
+    result=1
+  else
+    result=0
+  fi
+  __to_boolean "$result" "==" 1
+}
+
+function __sudo {
+  local sudo_result doas_result
+  which sudo >/dev/null 2>&1
+  sudo_result=$?
+  which doas >/dev/null 2>&1
+  doas_result=$?
+  if __to_boolean "$sudo_result" "==" 0
+  then
+    sudo "$@"
+  elif __to_boolean "$doas_result" "==" 0
+  then
+   doas "$@"
+  elif __is_root
+  then
+    "$@"
+  else
+    local args
+    args=""
+    logging.error "No sudo or doas installed, cannot run this command"
+    for i in $*; do 
+      args+="$i "
+    done
+    logging.error "$args"
+  fi
+}
