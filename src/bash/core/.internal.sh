@@ -148,9 +148,9 @@ function __is_root {
 
 function __sudo {
   local sudo_result doas_result
-  which sudo >/dev/null 2>&1
+  command -v sudo >/dev/null 2>&1
   sudo_result=$?
-  which doas >/dev/null 2>&1
+  command -v doas >/dev/null 2>&1
   doas_result=$?
   if __to_boolean "$sudo_result" "==" 0
   then
@@ -165,7 +165,8 @@ function __sudo {
     local args
     args=""
     logging.error "No sudo or doas installed, cannot run this command"
-    for i in $*; do 
+    for i in "$@"
+    do 
       args+="$i "
     done
     logging.error "$args"
