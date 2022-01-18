@@ -66,7 +66,7 @@ function __to_boolean {
     then
         result=$(if [[ "$1" -ne "$3" ]]; then echo 1; else echo 0; fi)
     fi
-    
+   
     if [[ "$result" -eq 1 ]]
     then
         true
@@ -135,6 +135,20 @@ function __check_if_arg_is_local_map {
     __to_boolean "$result" "==" 1
 }
 
+function __verify_arg_is_valid_perm {
+    local result
+    result=1
+    if [[ ! "$1" =~ [ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+ ]]
+    then 
+        result=0
+    fi
+    if [[ "$1" =~ [0-7]{4} ]]
+    then
+        result=1
+    fi
+    __to_boolean "$result" "==" 1
+}
+
 function __is_root {
   local result
   if [ "$EUID" -eq 0 ]
@@ -164,7 +178,7 @@ function __sudo {
   else
     local args
     args=""
-    logging.error "No sudo or doas installed, cannot run this command"
+    logging.error "No sudo or doas installed, cannot run this command:"
     for i in "$@"
     do 
       args+="$i "

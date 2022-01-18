@@ -6,6 +6,9 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
+require io/files/users
+require io/files/group
+require io/files/other
 
 function files.rename_file {
     __verify_nr_args "$#" 2 files.rename_file
@@ -210,6 +213,15 @@ function files.dir_change_owner_group {
   target="$1"
   owner="$2"
   group="$3"
+  files.file_change_owner_group $target $owner $group
+}
+
+function files.dir_change_owner_group_recursive {
+  __verify_nr_args "$#" 3 files.dir_change_owner_group_recursive
+  local target owner group
+  target="$1"
+  owner="$2"
+  group="$3"
   __sudo chown --recursive "$owner:$group" "$target"
 }
 
@@ -221,13 +233,96 @@ function files.dir_change_owner {
   files.dir_change_owner_group "$target" "$owner" "$owner"
 }
 
+function files.dir_change_owner_recursive {
+  __verify_nr_args "$#" 2 files.dir_change_owner
+  local target owner
+  target="$1"
+  owner="$2"
+  files.dir_change_owner_group_recursive "$target" "$owner" "$owner"
+}
+
 function files.dir_copy_owner {
+  __verify_nr_args "$#" 2 files.dir_copy_owner
+  local target reference
+  target="$1"
+  reference="$2"
+  files.file_copy_owner "$target" "$reference"
+}
+
+function files.dir_copy_owner_recursive {
   __verify_nr_args "$#" 2 files.dir_copy_owner
   local target reference
   target="$1"
   reference="$2"
   __sudo chown --reference="$reference" --recursive "$target"
 }
+
+function files.file_set_perms {
+  __verify_nr_args "$#" 2 files.file_set_perms
+  local target perms
+  target="$1"
+  perms="$2"
+  if __verify_arg_is_valid_perm "$perms"
+  then
+    __sudo chmod "$perms" "$target"
+  else
+    logging.error "$perms is invalid perms string"
+  fi
+}
+
+function files.file_set_all_read_only_clear {
+  __verify_nr_args "$#" 1 files.file_set_all_read_only_clear
+  local target
+  target="$1"
+  files.file_set_perms "$target" "ugo=r"
+}
+
+function files.file_set_all_read_only {
+  __verify_nr_args "$#" 1 files.file_set_all_read_only
+  local target
+  target="$1"
+  files.file_set_all_read_only_clear "$target"
+}
+
+
+function files.file_set_all_write_only_clear {
+  __verify_nr_args "$#" 1 files.file_set_all_write_only_clear
+  local target
+  target="$1"
+  files.file_set_perms "$target" "ugo=w"
+}
+
+function files.file_set_all_write_only {
+  __verify_nr_args "$#" 1 files.file_set_all_write_only
+  local target
+  target="$1"
+  files.file_set_all_write_only_clear "$target"
+}
+
+function files.file_set_all_execute_only_clear {
+  __verify_nr_args "$#" 1 files.file_set_all_execute_only_clear
+  local target
+  target="$1"
+  files.file_set_perms "$target" "ugo=x"
+}
+
+function files.file_set_all_execute_only {
+  __verify_nr_args "$#" 1 files.file_set_all_execute_only_clear
+  local target
+  target="$1"
+  files.file_set_all_execute_only_clear "$target"
+}
+
+function files.file_copy_perms {
+  __verify_nr_args "$#" 2 files.file_copy_perms
+  local target reference
+  target="$1"
+  reference="$2"
+  __sudo chmod --reference="$reference" "$target"
+}
+
+
 # file perms
-# 
+#   file perms for dir
+#       with and without recursive
 ##

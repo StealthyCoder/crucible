@@ -6,6 +6,9 @@
 ### CRUCIBLE META DATA ###
 
 require io/files/files
+require io/files/safe/users
+require io/files/safe/group
+require io/files/safe/other
 
 function files.rename_file {
     __verify_nr_args "$#" 2 files.rename_file
@@ -156,6 +159,18 @@ function files.dir_change_owner_group {
   group="$3"
   if [ -d "$target" ]
   then
+    __sudo chown "$owner:$group" "$target"
+  fi
+}
+
+function files.dir_change_owner_group_recursive {
+  __verify_nr_args "$#" 3 files.dir_change_owner_group
+  local target owner group
+  target="$1"
+  owner="$2"
+  group="$3"
+  if [ -d "$target" ]
+  then
     __sudo chown --recursive "$owner:$group" "$target"
   fi
 }
@@ -175,6 +190,33 @@ function files.dir_copy_owner {
   reference="$2"
   if [ -d "$target" ]
   then
+    __sudo chown --reference="$reference" "$target"
+  fi
+}
+
+function files.dir_copy_owner_recursive {
+  __verify_nr_args "$#" 2 files.dir_copy_owner
+  local target reference
+  target="$1"
+  reference="$2"
+  if [ -d "$target" ]
+  then
     __sudo chown --reference="$reference" --recursive "$target"
+  fi
+}
+
+function files.file_set_perms {
+  __verify_nr_args "$#" 2 files.file_set_perms
+  local target perms
+  target="$1"
+  perms="$2"
+  if __verify_arg_is_valid_perm "$perms"
+  then
+    if [ -f "$target" ]
+    then
+        __sudo chmod "$perms" "$target"
+    fi
+  else
+    logging.error "$perms is invalid perms string"
   fi
 }
