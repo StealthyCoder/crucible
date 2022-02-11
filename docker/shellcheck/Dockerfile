@@ -1,8 +1,10 @@
 FROM debian:buster-slim
 
-RUN apt update && \
-    apt upgrade -y && \
-    apt install -y shellcheck
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y shellcheck=0.5.0-3 && \
+    apt-get clean && \ 
+    rm -rf /var/lib/apt/lists/*
 
 RUN echo '#!/usr/bin/env bash\n\
 shopt -s dotglob\n\

@@ -33,11 +33,11 @@ function files.rename_dir {
 }
 
 function files.move_file {
-    files.rename_file $*
+    files.rename_file "$*"
 }
 
 function files.move_dir {
-    files.rename_dir $*
+    files.rename_dir "$*"
 }
 
 function files.delete_file {

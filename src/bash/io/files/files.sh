@@ -20,7 +20,7 @@ function files.rename_file {
 
 function files.rename_dir {
     __verify_nr_args "$#" 2 files.rename_dir
-    files.rename_file $*
+    files.rename_file "$*"
 }
 
 function files.create_dir {
@@ -98,11 +98,11 @@ function files.list_current_dir {
 }
 
 function files.move_file {
-    files.rename_file $*
+    files.rename_file "$*"
 }
 
 function files.move_dir {
-    files.rename_dir $*
+    files.rename_dir "$*"
 }
 
 function files.delete_file {
@@ -213,7 +213,7 @@ function files.dir_change_owner_group {
   target="$1"
   owner="$2"
   group="$3"
-  files.file_change_owner_group $target $owner $group
+  files.file_change_owner_group "$target" "$owner" "$group"
 }
 
 function files.dir_change_owner_group_recursive {

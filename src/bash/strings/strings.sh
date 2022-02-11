@@ -77,7 +77,7 @@ function strings.substring {
     string="$1"
     from="$2"
     to="$3"
-    echo "${string:("$from"):"$to"}"
+    echo "${string:"$from":"$to"}"
 }
 
 function strings.length {    
@@ -92,7 +92,7 @@ function strings.lindex {
     string="$1"
     search="$2"
     t="${string#*$search}"
-    echo "$(($(strings.length "$string") - $(strings.length "$t") - $(strings.length "$search") ))"
+    echo "$(("$(strings.length "$string")" - "$(strings.length "$t")" - "$(strings.length "$search")" ))"
 }
 
 function strings.rindex {
@@ -101,7 +101,7 @@ function strings.rindex {
     string="$1"
     search="$2"
     t="${string##*$search}"
-    echo "$(($(strings.length "$string") - $(strings.length "$t") - $(strings.length "$search") ))"
+    echo "$(("$(strings.length "$string")" - "$(strings.length "$t")" - "$(strings.length "$search")" ))"
 }
 
 function strings.slice {
