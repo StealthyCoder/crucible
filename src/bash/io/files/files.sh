@@ -18,26 +18,6 @@ function files.rename_file {
     mv --strip-trailing-slashes --no-target-directory "$src" "$target"
 }
 
-function files.rename_dir {
-    __verify_nr_args "$#" 2 files.rename_dir
-    files.rename_file "$*"
-}
-
-function files.create_dir {
-    __verify_nr_args "$#" 2 files.create_dir
-    local dir path
-    dir="$1"
-    path="$2"
-    mkdir --parents "$path/$dir"
-}
-
-function files.create_dir_local {
-    __verify_nr_args "$#" 1 files.create_dir_local
-    local dir 
-    dir="$1"
-    files.create_dir "$dir" ./
-}
-
 function files.change_dir {
     __verify_nr_args "$#" 1 files.change_dir
     local path
@@ -101,22 +81,11 @@ function files.move_file {
     files.rename_file "$*"
 }
 
-function files.move_dir {
-    files.rename_dir "$*"
-}
-
 function files.delete_file {
     __verify_nr_args "$#" 1 files.delete_file
     local path
     path="$1"
     rm "$path"
-}
-
-function files.delete_dir {
-    __verify_nr_args "$#" 1 files.delete_dir
-    local path
-    path="$1"
-    rm --dir "$path"
 }
 
 function files.delete_dir_and_files {
@@ -132,14 +101,6 @@ function files.copy_file {
     src="$1"
     target="$2"
     cp --strip-trailing-slashes --no-target-directory "$src" "$target"
-}
-
-function files.copy_dir {
-    __verify_nr_args "$#" 2 files.copy_dir
-    local src target
-    src="$1"
-    target="$2"
-    cp --recursive --strip-trailing-slashes --no-target-directory "$src" "$target"
 }
 
 function files.update_file {
@@ -161,18 +122,6 @@ function files.file_exists {
     __verify_nr_args "$#" 1 files.file_exists
     local target result
     if [ -f "$target" ]
-    then
-        result=1
-    else
-        result=0
-    fi
-    __to_boolean "$result" "==" 1
-}
-
-function files.dir_exists {
-    __verify_nr_args "$#" 1 files.dir_exists
-    local target result
-    if [ -d "$target" ]
     then
         result=1
     else
@@ -207,56 +156,6 @@ function files.file_copy_owner {
   __sudo chown --reference="$reference" "$target"
 }
 
-function files.dir_change_owner_group {
-  __verify_nr_args "$#" 3 files.dir_change_owner_group
-  local target owner group
-  target="$1"
-  owner="$2"
-  group="$3"
-  files.file_change_owner_group "$target" "$owner" "$group"
-}
-
-function files.dir_change_owner_group_recursive {
-  __verify_nr_args "$#" 3 files.dir_change_owner_group_recursive
-  local target owner group
-  target="$1"
-  owner="$2"
-  group="$3"
-  __sudo chown --recursive "$owner:$group" "$target"
-}
-
-function files.dir_change_owner {
-  __verify_nr_args "$#" 2 files.dir_change_owner
-  local target owner
-  target="$1"
-  owner="$2"
-  files.dir_change_owner_group "$target" "$owner" "$owner"
-}
-
-function files.dir_change_owner_recursive {
-  __verify_nr_args "$#" 2 files.dir_change_owner
-  local target owner
-  target="$1"
-  owner="$2"
-  files.dir_change_owner_group_recursive "$target" "$owner" "$owner"
-}
-
-function files.dir_copy_owner {
-  __verify_nr_args "$#" 2 files.dir_copy_owner
-  local target reference
-  target="$1"
-  reference="$2"
-  files.file_copy_owner "$target" "$reference"
-}
-
-function files.dir_copy_owner_recursive {
-  __verify_nr_args "$#" 2 files.dir_copy_owner
-  local target reference
-  target="$1"
-  reference="$2"
-  __sudo chown --reference="$reference" --recursive "$target"
-}
-
 function files.file_set_perms {
   __verify_nr_args "$#" 2 files.file_set_perms
   local target perms
@@ -281,7 +180,7 @@ function files.file_set_all_read_only {
   __verify_nr_args "$#" 1 files.file_set_all_read_only
   local target
   target="$1"
-  files.file_set_all_read_only_clear "$target"
+  files.file_set_perms "$target" "ugo+r"
 }
 
 
@@ -296,7 +195,7 @@ function files.file_set_all_write_only {
   __verify_nr_args "$#" 1 files.file_set_all_write_only
   local target
   target="$1"
-  files.file_set_all_write_only_clear "$target"
+  files.file_set_perms "$target" "ugo+w"
 }
 
 function files.file_set_all_execute_only_clear {
@@ -307,10 +206,10 @@ function files.file_set_all_execute_only_clear {
 }
 
 function files.file_set_all_execute_only {
-  __verify_nr_args "$#" 1 files.file_set_all_execute_only_clear
+  __verify_nr_args "$#" 1 files.file_set_all_execute_only
   local target
   target="$1"
-  files.file_set_all_execute_only_clear "$target"
+  files.file_set_perms "$target" "ugo+x"
 }
 
 function files.file_copy_perms {
@@ -320,9 +219,3 @@ function files.file_copy_perms {
   reference="$2"
   __sudo chmod --reference="$reference" "$target"
 }
-
-
-# file perms
-#   file perms for dir
-#       with and without recursive
-##

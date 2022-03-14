@@ -17,9 +17,13 @@ function __verify_nr_args {
         logging.info " Example: __verify_nr_args 1 1 arrays.dummy"
         exit 1
     fi
-    if [ "$1" -ne "$2" ]
+    if [ "$1" -gt "$2" ]
     then
-        logging.error "Need exactly $2 arguments for $3, gotten only $1"
+        logging.warning "Need exactly $2 arguments for $3, gotten $1."
+        logging.warning "The surplus will not be used."
+    elif [ "$1" -ne "$2" ]
+    then
+        logging.error "Need exactly $2 arguments for $3, gotten $1."
         exit 1
     fi
 }

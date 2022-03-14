@@ -63,10 +63,10 @@ By running the following command you get a nice clean environment in which `cruc
 - [ ] Redirect
 - [ ] Search
 - [ ] Binary I/O
-- [ ] File I/O
+- [x] File I/O
 - [ ] Network I/O
 - [ ] Processes
-- [ ] Classes
+- [ ] [Classes](https://stealthycoder.writeas.com/crucible-the-future)
 - [ ] Http
 - [ ] File Cache
 - [ ] Memory Cache
