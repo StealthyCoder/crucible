@@ -17,9 +17,13 @@ function __verify_nr_args {
         logging.info " Example: __verify_nr_args 1 1 arrays.dummy"
         exit 1
     fi
-    if [ "$1" -ne "$2" ]
+    if [ "$1" -gt "$2" ]
     then
-        logging.error "Need exactly $2 arguments for $3, gotten only $1"
+        logging.warning "Need exactly $2 arguments for $3, gotten $1."
+        logging.warning "The surplus will not be used."
+    elif [ "$1" -ne "$2" ]
+    then
+        logging.error "Need exactly $2 arguments for $3, gotten $1."
         exit 1
     fi
 }
@@ -66,7 +70,7 @@ function __to_boolean {
     then
         result=$(if [[ "$1" -ne "$3" ]]; then echo 1; else echo 0; fi)
     fi
-    
+   
     if [[ "$result" -eq 1 ]]
     then
         true
@@ -135,3 +139,54 @@ function __check_if_arg_is_local_map {
     __to_boolean "$result" "==" 1
 }
 
+function __verify_arg_is_valid_perm {
+    local result
+    result=1
+    if [[ ! "$1" =~ [ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+ ]]
+    then 
+        result=0
+    fi
+    if [[ "$1" =~ [0-7]{4} ]]
+    then
+        result=1
+    fi
+    __to_boolean "$result" "==" 1
+}
+
+function __is_root {
+  local result
+  if [ "$EUID" -eq 0 ]
+  then
+    result=1
+  else
+    result=0
+  fi
+  __to_boolean "$result" "==" 1
+}
+
+function __sudo {
+  local sudo_result doas_result
+  command -v sudo >/dev/null 2>&1
+  sudo_result=$?
+  command -v doas >/dev/null 2>&1
+  doas_result=$?
+  if __to_boolean "$sudo_result" "==" 0
+  then
+    sudo "$@"
+  elif __to_boolean "$doas_result" "==" 0
+  then
+   doas "$@"
+  elif __is_root
+  then
+    "$@"
+  else
+    local args
+    args=""
+    logging.error "No sudo or doas installed, cannot run this command:"
+    for i in "$@"
+    do 
+      args+="$i "
+    done
+    logging.error "$args"
+  fi
+}
