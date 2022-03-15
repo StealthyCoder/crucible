@@ -197,3 +197,8 @@ function __command_exists {
   command_result=$?
   __to_boolean "$command_result" "==" 0
 }
+
+function __ask {
+	read -r -p "$1" var
+	echo "$var"
+}

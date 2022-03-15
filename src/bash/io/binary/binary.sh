@@ -230,8 +230,25 @@ function binary.get_file_type {
     echo "$result"
 }
 
+function binary.write_file {
+    __verify_nr_args "$#" 2 binary.write_file
+    local content target
+    content="$1"
+    target="$2"
+    echo "$content" > "$target"
+}
+
+function binary.append_file {
+    __verify_nr_args "$#" 2 binary.append_file
+    local content target
+    content="$1"
+    target="$2"
+    echo "$content" >> "$target"
+}
+
 # Binary
-#   - Write content to file
+#   v Write content to file
+#   v Append to file
 #   v Read content of file
 #   - write contents to stdout
 #   - write contents to stderr

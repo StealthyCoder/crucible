@@ -23,3 +23,14 @@ function binary.read_file {
     fi
   fi
 }
+
+function binary.write_file {
+    __verify_nr_args "$#" 2 binary.write_file
+    local content target confirmation
+    content="$1"
+    target="$2"
+    if [ ! -f "$target" ]
+    then
+      echo "$content" > "$target"
+    fi
+}
