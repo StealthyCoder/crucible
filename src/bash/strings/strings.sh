@@ -77,10 +77,10 @@ function strings.substring {
     string="$1"
     from="$2"
     to="$3"
-    echo "${string:"$from":"$to"}"
+    echo "${string:$from:$to}"
 }
 
-function strings.length {    
+function strings.length {
     local string
     string="$1"
     echo "${#string}"
