@@ -21,16 +21,18 @@ function binary.is_printable {
     __verify_nr_args "$#" 1 binary.is_printable
     local target result
     target="$1"
-    result=1
+    result=0
     if __command_exists "file"
     then
-        if [[ ! "$(file "$1" 2>/dev/null)" =~ .+text$ ]]
+        if [[ "$(file "$1" 2>/dev/null)" =~ .+text$ ]]
         then
-            result=0
+            result=1
+        elif [[ "$(file "$1" 2>/dev/null)" =~ .+text.+ ]]
+        then
+            result=1
         fi
     else
         logging.warning "[file] command does not exist, cannot determine if $1 is printable"
-        result=0
     fi
      __to_boolean "$result" "==" 1
 }
@@ -61,6 +63,10 @@ function binary.is_text {
     if __command_exists "file"
     then
         if [[ ! "$(file "$1" 2>/dev/null)" =~ .+text$ ]]
+        then
+            result=0
+        fi
+        if [[ ! "$(file "$1" 2>/dev/null)" =~ .+text.+ ]]
         then
             result=0
         fi
@@ -186,14 +192,18 @@ function binary.is_executable {
     result=0
     if  __command_exists "file"
     then
-        if [[ "$(file "$1" 2>/dev/null)" =~ .+executable.+ ]]
+        if [[ "$(file "$target" 2>/dev/null)" =~ .+executable.+ ]]
         then
             local arch
             arch="$(os.get_architecture)"
+            arch="$(strings.replace_char_with "$arch" _ -)"
             if [[ "$(file "$target" 2>/dev/null)" =~ .+$arch.+ ]]
             then
                 result=1
             fi
+        elif [[ "$(file "$target" 2>/dev/null)" =~ .+executable$ ]]
+        then
+            result=1
         fi
     else
         logging.warning "[file] command does not exist, cannot determine if $1 is executable"
