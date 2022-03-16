@@ -13,8 +13,6 @@ function os.get_architecture {
     then
         echo "$(uname -m)"
     else
-        logging.warning "[uname] command does not exist, get architecture"
+        logging.warning "[uname] command does not exist, unable to get architecture"
     fi
 }
-
-#  v get architecture
