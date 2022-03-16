@@ -309,22 +309,16 @@ function binary.append_file_void {
     binary.append_file "$content" /dev/null
 }
 
-# Binary
-#   v Write content to file
-#   v Append to file
-#   v Read content of file
-#   - write contents to stdout
-#   - write contents to stderr
-#   v write contents to dev null
-#   v read random bytes
-#   v get file type
-#   v isPNG
-#   v isGIF
-#   v isExecutable
-#   v isBinary
-#   v isPrintable
-#   v isPDF
-#   v isHTML
-#   v isText
-#   v extract text from binary
-#   v create hexdump from binary
+function binary.print {
+    __verify_nr_args "$#" 1 binary.print
+    local content
+    content="$1"
+    echo "$content" >&1
+}
+
+function binary.print_error {
+    __verify_nr_args "$#" 1 binary.print_error
+    local content
+    content="$1"
+    echo "$content" 1>&2
+}
