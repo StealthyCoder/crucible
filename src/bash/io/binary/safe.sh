@@ -34,3 +34,41 @@ function binary.write_file {
       echo "$content" > "$target"
     fi
 }
+
+function binary.extract_strings {
+    __verify_nr_args "$#" 1 binary.extract_strings
+    local target content
+    target="$1"
+    content=""
+    if  binary.is_binary "$target"
+    then
+        if  __command_exists "strings"
+        then
+            content="$(strings -d $target)"
+        else
+            logging.warning "[strings] command does not exist, cannot determine extract strings from $target"
+        fi
+    else
+        logging.warning "$target is not a binary file"
+    fi
+    echo "$content"
+}
+
+function binary.random_bytes {
+    __verify_nr_args "$#" 1 binary.random_bytes
+    local size content
+    size="$1"
+    content=""
+    if [[ "$size" =~ [0-9]+[K]?$ ]]
+    then
+      if [ "$(strings.replace_char_with $size 'K' '')" -gt 10240 ]
+      then
+        logging.warning "$size is too large, has to be fewer than or equal to 10240 for both bytes and Kibibytes"
+      else
+        content="$(head -c $size </dev/urandom)"
+      fi
+    else
+      logging.warning "$size is too large, has to be in bytes (no suffix) or Kibibyte (K) range"
+    fi
+    echo "$content"
+}

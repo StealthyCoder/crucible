@@ -246,6 +246,55 @@ function binary.append_file {
     echo "$content" >> "$target"
 }
 
+function binary.extract_strings {
+    __verify_nr_args "$#" 1 binary.extract_strings
+    local target content
+    target="$1"
+    content=""
+    if  binary.is_binary "$target"
+    then
+        if  __command_exists "strings"
+        then
+            content="$(strings $target)"
+        else
+            logging.warning "[strings] command does not exist, cannot extract strings from $target"
+        fi
+    else
+        logging.warning "$target is not a binary file"
+    fi
+    echo "$content"
+}
+
+function binary.hexdump {
+    __verify_nr_args "$#" 1 binary.hexdump
+    local target content
+    target="$1"
+    content=""
+    if  binary.is_binary "$target"
+    then
+        if  __command_exists "xxd"
+        then
+            content="$(xxd $target)"
+        elif __command_exists "hexdump"
+        then
+            content="$(hexdump $target)"
+        else
+            logging.warning "[xxd, hexdump] commands do not exist, cannot create hexdump from $target"
+        fi
+    else
+        logging.warning "$target is not a binary file"
+    fi
+    echo "$content"
+}
+
+function binary.random_bytes {
+    __verify_nr_args "$#" 1 binary.random_bytes
+    local size content
+    size="$1"
+    content="$(head -c $size </dev/urandom)"
+    echo "$content"
+}
+
 # Binary
 #   v Write content to file
 #   v Append to file
@@ -263,5 +312,5 @@ function binary.append_file {
 #   v isPDF
 #   v isHTML
 #   v isText
-#   - extract text from binary
-#   - create hexdump from binary
+#   v extract text from binary
+#   v create hexdump from binary
