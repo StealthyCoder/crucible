@@ -315,7 +315,7 @@ function binary.append_file_void {
 #   v Read content of file
 #   - write contents to stdout
 #   - write contents to stderr
-#   - write contents to dev null
+#   v write contents to dev null
 #   v read random bytes
 #   v get file type
 #   v isPNG
