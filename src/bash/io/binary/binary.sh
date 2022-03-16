@@ -295,6 +295,20 @@ function binary.random_bytes {
     echo "$content"
 }
 
+function binary.write_file_void {
+    __verify_nr_args "$#" 1 binary.write_file_void
+    local content
+    content="$1"
+    binary.write_file "$content" /dev/null
+}
+
+function binary.append_file_void {
+    __verify_nr_args "$#" 1 binary.append_file_void
+    local content
+    content="$1"
+    binary.append_file "$content" /dev/null
+}
+
 # Binary
 #   v Write content to file
 #   v Append to file
@@ -302,7 +316,7 @@ function binary.random_bytes {
 #   - write contents to stdout
 #   - write contents to stderr
 #   - write contents to dev null
-#   - read random bytes
+#   v read random bytes
 #   v get file type
 #   v isPNG
 #   v isGIF

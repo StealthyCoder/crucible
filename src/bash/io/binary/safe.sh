@@ -26,7 +26,7 @@ function binary.read_file {
 
 function binary.write_file {
     __verify_nr_args "$#" 2 binary.write_file
-    local content target confirmation
+    local content target
     content="$1"
     target="$2"
     if [ ! -f "$target" ]
@@ -71,4 +71,11 @@ function binary.random_bytes {
       logging.warning "$size is too large, has to be in bytes (no suffix) or Kibibyte (K) range"
     fi
     echo "$content"
+}
+
+function binary.write_file_void {
+    __verify_nr_args "$#" 1 binary.write_file_void
+    local content
+    content="$1"
+    echo "$content" > /dev/null
 }
