@@ -6,7 +6,7 @@
 ### CRUCIBLE META DATA ###
 
 require crypto/hash/md5/md5
-require crypto/hash/sha/sha224
-require crypto/hash/sha/sha256
-require crypto/hash/sha/sha384
-require crypto/hash/sha/sha512
+require crypto/hash/sha/safe/sha224
+require crypto/hash/sha/safe/sha256
+require crypto/hash/sha/safe/sha384
+require crypto/hash/sha/safe/sha512
