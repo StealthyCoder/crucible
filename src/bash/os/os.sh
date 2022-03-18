@@ -10,7 +10,7 @@ require logging/logging
 
 function os.get_architecture {
 	if __command_exists "uname"; then
-		echo "$(uname -m)"
+		uname -m
 	else
 		logging.warning "[uname] command does not exist, unable to get architecture"
 	fi

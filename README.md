@@ -59,7 +59,7 @@ By running the following command you get a nice clean environment in which `cruc
 - [X] Arrays
 - [X] Maps
 - [x] Strings
-- [ ] Pipes
+- [x] Pipes
 - [x] Redirect
 - [ ] Search
 - [ ] Cryptography
