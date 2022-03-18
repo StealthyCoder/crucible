@@ -161,6 +161,6 @@ function strings.join {
 		l="$(strings.length "$result")"
 		result="$(strings.slice "$result" 0 $(($l - 1)))"
 		unset -f strings.join._joiner
+		echo "$result"
 	fi
-	echo "$result"
 }
