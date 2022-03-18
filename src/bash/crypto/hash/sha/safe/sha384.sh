@@ -18,6 +18,7 @@ function crypto.hash.sha384sum {
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot determine sha384 hash of $target")"
+		exit 1
 	fi
 	echo $_hash
 }
@@ -33,6 +34,7 @@ function crypto.hash.sha384sum_from_text {
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot determine sha384 hash of $target")"
+		exit 1
 	fi
 	echo $_hash
 }
@@ -47,6 +49,7 @@ function crypto.hash.sha384sum_check {
 		result=$?
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot use $checksum_file to determine checksums")"
+		exit 1
 	fi
 	__to_boolean "$result" "==" 0
 }
@@ -62,6 +65,7 @@ function crypto.hash.binary_sha384sum {
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot determine sha384 hash of $target")"
+		exit 1
 	fi
 	echo $_hash
 }
@@ -77,6 +81,7 @@ function crypto.hash.binary_sha384sum_from_bytes {
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot determine sha384 hash of $target")"
+		exit 1
 	fi
 	echo $_hash
 }
@@ -91,6 +96,7 @@ function crypto.hash.binary_sha384sum_check {
 		result=$?
 	else
 		redirect.text_to_error "$(logging.warning "[shasum] command not available, cannot use $checksum_file to determine checksums")"
+		exit 1
 	fi
 	__to_boolean "$result" "==" 0
 }
