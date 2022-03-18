@@ -6,6 +6,7 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
+require arrays/arrays
 
 function strings.to_lowercase {
 	__verify_nr_args "$#" 1 strings.to_lowercase
@@ -143,4 +144,23 @@ function strings.equals {
 function strings.equals_ignore_case {
 	__verify_nr_args "$#" 2 strings.equals_ignore_case
 	strings.equals "$(strings.to_lowercase "$1")" "$(strings.to_lowercase "$2")"
+}
+
+function strings.join {
+	__verify_nr_args "$#" 2 strings.join
+	if __verify_if_arg_is_array "$1"; then
+		local char result l
+		char="$2"
+		result=""
+		function strings.join._joiner {
+			local t
+			t="$(strings.concat "$1" "$char")"
+			result=$(strings.concat "$result" "$t")
+		}
+		arrays.foreach "$1" strings.join._joiner
+		l="$(strings.length "$result")"
+		result="$(strings.slice "$result" 0 $(($l - 1)))"
+		unset -f strings.join._joiner
+		echo "$result"
+	fi
 }

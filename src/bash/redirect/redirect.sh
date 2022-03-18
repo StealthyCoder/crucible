@@ -29,6 +29,13 @@ function redirect.merge_all {
 	$execute 2>&1
 }
 
+function redirect.text_to_error {
+	__verify_nr_args "$#" 1 redirect.text_to_error
+	local content
+	content="$1"
+	echo "$content" 1>&2
+}
+
 function redirect.text_to_file {
 	__verify_nr_args "$#" 2 redirect.text_to_file
 	local content target
