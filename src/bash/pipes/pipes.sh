@@ -12,7 +12,7 @@ function pipes.pipe_to {
 	local execute target
 	execute="$1"
 	target="$2"
-	$execute | $target -
+	$execute | $target
 }
 
 function pipes.pipe_text_to {
