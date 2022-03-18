@@ -12,7 +12,7 @@ function redirect.to_file {
 	local execute target
 	execute="$1"
 	target="$2"
-	echo "$($execute >$target)"
+	$execute >"$target"
 }
 
 function redirect.to_file_void {
@@ -26,7 +26,7 @@ function redirect.merge_all {
 	__verify_nr_args "$#" 1 redirect.merge_all
 	local execute
 	execute="$1"
-	echo "$($execute 2>&1)"
+	$execute 2>&1
 }
 
 function redirect.text_to_file {
