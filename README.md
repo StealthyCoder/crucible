@@ -62,7 +62,7 @@ By running the following command you get a nice clean environment in which `cruc
 - [x] Pipes
 - [x] Redirect
 - [ ] Search
-- [ ] Cryptography
+- [x] Cryptography
 - [x] Binary I/O
 - [x] File I/O
 - [ ] Network I/O
