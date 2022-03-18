@@ -28,3 +28,18 @@ function redirect.merge_all {
 	execute="$1"
 	echo "$($execute 2>&1)"
 }
+
+function redirect.text_to_file {
+	__verify_nr_args "$#" 2 redirect.text_to_file
+	local content target
+	content="$1"
+	target="$2"
+	echo "$content" >"$target"
+}
+
+function redirect.text_to_file_void {
+	__verify_nr_args "$#" 1 redirect.text_to_file_void
+	local content
+	content="$1"
+	redirect.text_to_file "$content" /dev/null
+}
