@@ -1,0 +1,12 @@
+name: 'shfmt'
+description: 'shfmt shell scripts'
+inputs:
+  which-shell:  # id of input
+    description: 'Which shell to shfmt'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.which-shell }}
+

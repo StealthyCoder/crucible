@@ -6,5 +6,5 @@
 ### CRUCIBLE META DATA ###
 
 function noop {
-    true;
+	true
 }

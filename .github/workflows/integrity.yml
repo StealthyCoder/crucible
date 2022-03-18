@@ -15,3 +15,7 @@ jobs:
         uses: ./.github/actions/test
         with:
           which-shell: bash
+      - name: shfmt BASH
+        uses: ./.github/actions/shfmt
+        with:
+          which-shell: bash

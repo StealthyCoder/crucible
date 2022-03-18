@@ -38,3 +38,13 @@ services:
       - ./src/bash/bin/crucible:/bin/crucible
     environment:
       CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
+
+  shfmt:
+    container_name: shfmt
+    build:
+      context: docker/shfmt
+      dockerfile: Dockerfile
+    image: crucible/shfmt:1.0
+    volumes:
+      - ./test:/srv/test
+      - ./src:/srv/src
