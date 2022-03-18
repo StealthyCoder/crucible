@@ -60,7 +60,7 @@ By running the following command you get a nice clean environment in which `cruc
 - [X] Maps
 - [x] Strings
 - [ ] Pipes
-- [ ] Redirect
+- [x] Redirect
 - [ ] Search
 - [ ] Cryptography
 - [x] Binary I/O
@@ -69,8 +69,8 @@ By running the following command you get a nice clean environment in which `cruc
 - [ ] Processes
 - [ ] [Classes](https://stealthycoder.writeas.com/crucible-the-future)
 - [ ] Http
-- [ ] File Cache
-- [ ] Memory Cache
+- [ ] [File Cache](https://stealthycoder.writeas.com/crucible-the-future)
+- [ ] [Memory Cache](https://stealthycoder.writeas.com/crucible-the-future)
 
 # Static Code Analysis
 

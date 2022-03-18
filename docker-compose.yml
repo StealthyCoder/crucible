@@ -45,6 +45,7 @@ services:
       context: docker/shfmt
       dockerfile: Dockerfile
     image: crucible/shfmt:1.0
+    user: ${DOCKER_UID:-1000}
     volumes:
       - ./test:/srv/test
       - ./src:/srv/src
