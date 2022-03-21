@@ -6,9 +6,6 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
-require io/files/users
-require io/files/group
-require io/files/other
 
 function files.rename_file {
 	__verify_nr_args "$#" 2 files.rename_file
