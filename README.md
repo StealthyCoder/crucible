@@ -61,7 +61,7 @@ By running the following command you get a nice clean environment in which `cruc
 - [x] Strings
 - [x] Pipes
 - [x] Redirect
-- [ ] Search
+- [x] Search
 - [x] Cryptography
 - [x] Binary I/O
 - [x] File I/O
