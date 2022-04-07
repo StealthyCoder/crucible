@@ -6,9 +6,6 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
-require io/files/users
-require io/files/group
-require io/files/other
 
 function files.rename_file {
 	__verify_nr_args "$#" 2 files.rename_file
@@ -73,8 +70,19 @@ function files.list_dir {
 	ls "$path"
 }
 
+function files.list_dir_recursive {
+	__verify_nr_args "$#" 1 files.list_dir_recursive
+	local path
+	path="$1"
+	ls -R "$path"
+}
+
 function files.list_current_dir {
 	files.list_dir ./
+}
+
+function files.list_current_dir_recursive {
+	files.list_dir_recursive ./
 }
 
 function files.move_file {

@@ -164,3 +164,45 @@ function strings.join {
 		echo "$result"
 	fi
 }
+
+function strings.starts_with {
+	__verify_nr_args "$#" 2 strings.starts_with
+	local string char result length
+	string="$1"
+	char="$2"
+	length=$(strings.length "$char")
+	result=$(strings.slice "$string" 0 "$length")
+	strings.equals "$result" "$char"
+}
+
+function strings.ends_with {
+	__verify_nr_args "$#" 2 strings.ends_with
+	local string char result length total_length
+	string="$1"
+	char="$2"
+	total_length=$(strings.length "$string")
+	length=$(strings.length "$char")
+	result=$(strings.slice "$string" $(($total_length - $length)) "$length")
+	strings.equals "$result" "$char"
+}
+
+function strings.starts_with_ignore_case {
+	__verify_nr_args "$#" 2 strings.starts_with_ignore_case
+	local string char result length
+	string="$1"
+	char="$2"
+	length=$(strings.length "$char")
+	result=$(strings.slice "$string" 0 "$length")
+	strings.equals_ignore_case "$result" "$char"
+}
+
+function strings.ends_with_ignore_case {
+	__verify_nr_args "$#" 2 strings.ends_with_ignore_case
+	local string char result length total_length
+	string="$1"
+	char="$2"
+	total_length=$(strings.length "$string")
+	length=$(strings.length "$char")
+	result=$(strings.slice "$string" $(($total_length - $length)) "$length")
+	strings.equals_ignore_case "$result" "$char"
+}

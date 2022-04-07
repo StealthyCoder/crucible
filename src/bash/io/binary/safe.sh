@@ -7,6 +7,7 @@
 
 require core/.internal
 require io/binary/binary
+require redirect/redirect
 
 function binary.read_file {
 	__verify_nr_args "$#" 1 binary.read_file
@@ -40,10 +41,10 @@ function binary.extract_strings {
 		if __command_exists "strings"; then
 			content="$(strings -d $target)"
 		else
-			logging.warning "[strings] command does not exist, cannot determine extract strings from $target"
+			redirect.text_to_error "$(logging.warning "[strings] command does not exist, cannot determine extract strings from $target")"
 		fi
 	else
-		logging.warning "$target is not a binary file"
+		redirect.text_to_error "$(logging.warning "$target is not a binary file")"
 	fi
 	echo "$content"
 }
