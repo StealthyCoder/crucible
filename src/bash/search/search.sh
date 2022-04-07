@@ -39,7 +39,7 @@ function search.find_files_by_filename {
 	unset -f search._recursive_find_files
 }
 
-function search.find_files_by_filename_insensitive {
+function search.find_files_by_filename_ignore_case {
 	__verify_nr_args "$#" 2 search.find_file_by_filename_insensitive
 	local location token
 	location="$1"
@@ -100,7 +100,7 @@ function search.find_files_containing {
 	unset -f search._recursive_find_files
 }
 
-function search.find_files_containing_insensitive {
+function search.find_files_containing_ignore_case {
 	__verify_nr_args "$#" 2 search.find_file_containing
 	local location token
 	location="$1"
@@ -146,8 +146,36 @@ function search.find_files_by_extension {
 		for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n"); do
 			augmented=$(strings.replace_char_with "$f" ":" "/")
 			if [ -f "$augmented" ]; then
-				if strings.contains_string_sensitive "$augmented" "$token"; then
+				if strings.ends_with "$augmented" "$token"; then
 					if strings.starts_with "$augmented" "$location/"; then
+						arrays.add names "$augmented"
+					fi
+				fi
+			fi
+		done
+	}
+
+	search._recursive_find_files "$location" "*$token"
+	arrays.foreach names echo
+	unset names
+	unset -f search._recursive_find_files
+}
+
+function search.find_files_by_extension_ignore_case {
+	__verify_nr_args "$#" 2 search.find_file_by_filename
+	local location token
+	location="$1"
+	token="$2"
+
+	arrays.transform_into_array names
+
+	function search._recursive_find_files {
+		local augmented
+		for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n"); do
+			augmented=$(strings.replace_char_with "$f" ":" "/")
+			if [ -f "$augmented" ]; then
+				if strings.ends_with_ignore_case "$augmented" "$token"; then
+					if strings.starts_with_ignore_case "$augmented" "$location/"; then
 						arrays.add names "$augmented"
 					fi
 				fi
