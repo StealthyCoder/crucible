@@ -20,16 +20,19 @@ function search.find_files_by_filename {
     arrays.transform_into_array names
 
     function search._recursive_find_files {
-        local loc
-        loc="$1"
-        for f in "$(files.list_dir "$loc")"
+        local augmented
+        for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n")
         do
-            if [ -d "$f" ]
+            augmented=$(strings.replace_char_with "$f" ":" "/")
+            if [ -f "$augmented" ]
             then
-                search._recursive_find_files "$loc/$f" "$token"
-            elif strings.contains_string_sensitive "$f" "$token"
-            then
-                arrays.add names "$loc/$f"
+                if strings.contains_string_sensitive "$augmented" "$token"
+                then
+                    if strings.starts_with "$augmented" "$location/"
+                    then
+                        arrays.add names "$augmented"
+                    fi
+                fi
             fi
         done
     }
@@ -49,16 +52,19 @@ function search.find_files_by_filename_insensitive {
     arrays.transform_into_array names
 
     function search._recursive_find_files {
-        local loc
-        loc="$1"
-        for f in $(files.list_dir "$loc")
+        local augmented
+        for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n")
         do
-            if [ -d "$f" ]
+            augmented=$(strings.replace_char_with "$f" ":" "/")
+            if [ -f "$augmented" ]
             then
-                search._recursive_find_files "$loc/$f" "$token"
-            elif strings.strings.contains_string_ignore_case "$f" "$token"
-            then
-                arrays.add names "$loc/$f"
+                if strings.strings.contains_string_ignore_case "$augmented" "$token"
+                then
+                    if strings.starts_with "$augmented" "$location/"
+                    then
+                        arrays.add names "$augmented"
+                    fi
+                fi
             fi
         done
     }
@@ -78,23 +84,24 @@ function search.find_files_containing {
     arrays.transform_into_array names
 
     function search._recursive_find_files {
-        local loc
-        loc="$1"
-        for f in $(files.list_dir "$loc")
+        local augmented
+        for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n")
         do
-            if [ -d "$f" ]
+            augmented=$(strings.replace_char_with "$f" ":" "/")
+            if [ -f "$augmented" ]
             then
-                search._recursive_find_files "$loc/$f" "$token"
-            else
                 local result
-                result="$(binary.read_file "$loc/$f")"
+                result="$(binary.read_file "$augmented")"
                 if [ -z "$result" ]
                 then
-                    result="$(binary.extract_strings "$loc/$f")"
+                    result="$(binary.extract_strings "$augmented")"
                 fi
                 if strings.contains_string_sensitive "$result" "$token"
                 then
-                    arrays.add names "$loc/$f"
+                    if strings.starts_with "$augmented" "$location/"
+                    then
+                        arrays.add names "$augmented"
+                    fi
                 fi
             fi
         done
@@ -115,29 +122,62 @@ function search.find_files_containing_insensitive {
     arrays.transform_into_array names
 
     function search._recursive_find_files {
-        local loc
-        loc="$1"
-        for f in $(files.list_dir "$loc")
+        local augmented
+        for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n")
         do
-            if [ -d "$f" ]
+            augmented=$(strings.replace_char_with "$f" ":" "/")
+            if [ -f "$augmented" ]
             then
-                search._recursive_find_files "$loc/$f" "$token"
-            else
                 local result
-                result="$(binary.read_file "$loc/$f")"
+                result="$(binary.read_file "$augmented")"
                 if [ -z "$result" ]
                 then
-                    result="$(binary.extract_strings "$loc/$f")"
+                    result="$(binary.extract_strings "$augmented")"
                 fi
                 if strings.contains_string_ignore_case "$result" "$token"
                 then
-                    arrays.add names "$loc/$f"
+                    if strings.starts_with "$augmented" "$location/"
+                    then
+                        arrays.add names "$augmented"
+                    fi
                 fi
             fi
         done
     }
 
     search._recursive_find_files "$location" "$token"
+    arrays.foreach names echo
+    unset names
+    unset -f search._recursive_find_files
+}
+
+function search.find_files_by_extension {
+    __verify_nr_args "$#" 2 search.find_file_by_filename
+	local location token
+	location="$1"
+	token="$2"
+	
+    arrays.transform_into_array names
+
+    function search._recursive_find_files {
+        local augmented
+        for f in $(strings.split_by_char "$(files.list_dir_recursive "$location")" "\n")
+        do
+            augmented=$(strings.replace_char_with "$f" ":" "/")
+            if [ -f "$augmented" ]
+            then
+                if strings.contains_string_sensitive "$augmented" "$token"
+                then
+                    if strings.starts_with "$augmented" "$location/"
+                    then
+                        arrays.add names "$augmented"
+                    fi
+                fi
+            fi
+        done
+    }
+
+    search._recursive_find_files "$location" "*$token"
     arrays.foreach names echo
     unset names
     unset -f search._recursive_find_files

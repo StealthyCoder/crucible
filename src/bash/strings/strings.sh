@@ -164,3 +164,13 @@ function strings.join {
 		echo "$result"
 	fi
 }
+
+function strings.starts_with {
+	__verify_nr_args "$#" 2 strings.starts_with
+	local string char result length
+	string="$1"
+	char="$2"
+	length=$(strings.length "$char")
+	result=$(strings.slice "$string" 0 "$length")
+	strings.equals "$result" "$char"
+}
