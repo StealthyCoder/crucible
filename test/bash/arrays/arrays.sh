@@ -37,9 +37,9 @@ function arrays.arrays.transform_into_array {
 function arrays.arrays.add {
     intro "arrays.arrays.add"
     arrays.transform_into_array a
-    
+
     arrays.add a 1
-    
+
     test $? -eq 0 || fail "Could not add to array"
     # shellcheck disable=SC2154
     test "${a[@]}" = "1" || fail "Array does not contain element"
