@@ -19,18 +19,23 @@ function arrays.transform_into_array {
 
 function arrays.add {
 	__verify_nr_args "$#" 2 arrays.add
-
 	if __verify_if_arg_is_array "$1"; then
-		local arr element print
+		local arr element print is_local
+		is_local="N"
 		if __check_if_arg_is_local_array "$1"; then
 			print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/")"
+			is_local="Y"
 		else
 			print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/")"
 		fi
 		eval "$print"
 		element="$2"
 		arr+=("$element")
-		print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/")"
+		if [ "$is_local" == "Y" ]; then
+			print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/")"
+		else	
+			print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $1=/")"
+		fi
 		eval "$print"
 	fi
 
@@ -42,9 +47,11 @@ function arrays.push {
 
 function arrays.add_all {
 	if __verify_if_arg_is_array "$1"; then
-		local arr element print export_name
+		local arr element print export_name is_local
+		is_local="N"
 		if __check_if_arg_is_local_array "$1"; then
 			print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/")"
+			is_local="Y"
 		else
 			print="$(declare -p "$1" | sed -e "s/declare -ax $1=/arr=/")"
 		fi
@@ -56,8 +63,12 @@ function arrays.add_all {
 			arr+=("$element")
 			shift
 		done
-		declare -p
-		print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $export_name=/")"
+		if [ "$is_local" == "Y" ]; then
+			print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
+		else
+			print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $export_name=/")"
+		fi
+
 		eval "$print"
 	fi
 }
