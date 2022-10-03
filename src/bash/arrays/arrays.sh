@@ -33,7 +33,7 @@ function arrays.add {
 		arr+=("$element")
 		if [ "$is_local" == "Y" ]; then
 			print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/")"
-		else	
+		else
 			print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $1=/")"
 		fi
 		eval "$print"
