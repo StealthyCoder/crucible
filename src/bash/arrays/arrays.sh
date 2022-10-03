@@ -59,11 +59,7 @@ function arrays.add_all {
 			arr+=("$element")
 			shift
 		done
-		if [ "$is_local" == "Y" ]; then
-			print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
-		else
-			print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $export_name=/")"
-		fi
+		print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
 
 		eval "$print"
 	fi
