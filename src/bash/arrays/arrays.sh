@@ -13,6 +13,8 @@ function arrays.transform_into_array {
 	arr=()
 	print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $1=/")"
 	eval "$print"
+	print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $1=/")"
+	eval "$print"
 }
 
 function arrays.add {
@@ -54,8 +56,7 @@ function arrays.add_all {
 			arr+=("$element")
 			shift
 		done
-
-		print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
+		print="$(declare -p arr | sed -e "s/declare -ax arr=/declare -agx $export_name=/")"
 		eval "$print"
 	fi
 }
