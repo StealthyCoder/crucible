@@ -6,7 +6,7 @@
 ### CRUCIBLE META DATA ###
 
 function require {
-	local local_crucible_version shared_crucible_version shared_location module_name crucible_location slashes
+	local local_crucible_version shared_crucible_version shared_location module_name module_dir module_file crucible_location slashes
 	local_crucible_version="$(grep 'version' .crucible | cut -d'=' -f 2)"
 	shared_crucible_version="$(grep 'version' "$(grep 'shared_dir' .crucible | cut -d'=' -f 2)"/.crucible | cut -d'=' -f 2)"
 	crucible_location="$(grep 'location' .crucible | cut -d'=' -f 2)"
