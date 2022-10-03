@@ -7,6 +7,8 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  env:
+    CRUCIBLE_LOCATION: ${{ github.ref_name }}
   args:
     - ${{ inputs.which-shell }}
 
