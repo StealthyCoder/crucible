@@ -18,7 +18,7 @@ function arrays.transform_into_array {
 function arrays.add {
 	__verify_nr_args "$#" 2 arrays.add
 	if __verify_if_arg_is_array "$1"; then
-		local arr element print 
+		local arr element print
 		if __check_if_arg_is_local_array "$1"; then
 			print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/")"
 		else
@@ -39,7 +39,7 @@ function arrays.push {
 
 function arrays.add_all {
 	if __verify_if_arg_is_array "$1"; then
-		local arr element print export_name 
+		local arr element print export_name
 		if __check_if_arg_is_local_array "$1"; then
 			print="$(declare -p "$1" | sed -e "s/declare -a $1=/arr=/")"
 		else
