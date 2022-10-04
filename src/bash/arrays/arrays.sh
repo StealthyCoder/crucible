@@ -54,8 +54,8 @@ function arrays.add_all {
 			shift
 		done
 		print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
-		declare -p
 		eval "$print"
+		declare -p
 	fi
 }
 
