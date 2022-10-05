@@ -17,7 +17,6 @@ function arrays.transform_into_array {
 
 function arrays.add {
 	__verify_nr_args "$#" 2 arrays.add
-
 	if __verify_if_arg_is_array "$1"; then
 		local arr element print
 		if __check_if_arg_is_local_array "$1"; then
@@ -54,7 +53,6 @@ function arrays.add_all {
 			arr+=("$element")
 			shift
 		done
-
 		print="$(declare -p arr | sed -e "s/declare -a arr=/declare -agx $export_name=/")"
 		eval "$print"
 	fi

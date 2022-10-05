@@ -89,7 +89,7 @@ function strings.lindex {
 	local string search t
 	string="$1"
 	search="$2"
-	t="${string#*$search}"
+	t="${string#*"$search"}"
 	echo "$(("$(strings.length "$string")" - "$(strings.length "$t")" - "$(strings.length "$search")"))"
 }
 
@@ -98,7 +98,7 @@ function strings.rindex {
 	local string search t
 	string="$1"
 	search="$2"
-	t="${string##*$search}"
+	t="${string##*"$search"}"
 	echo "$(("$(strings.length "$string")" - "$(strings.length "$t")" - "$(strings.length "$search")"))"
 }
 
@@ -159,7 +159,7 @@ function strings.join {
 		}
 		arrays.foreach "$1" strings.join._joiner
 		l="$(strings.length "$result")"
-		result="$(strings.slice "$result" 0 $(($l - 1)))"
+		result="$(strings.slice "$result" 0 $((l - 1)))"
 		unset -f strings.join._joiner
 		echo "$result"
 	fi
@@ -182,7 +182,7 @@ function strings.ends_with {
 	char="$2"
 	total_length=$(strings.length "$string")
 	length=$(strings.length "$char")
-	result=$(strings.slice "$string" $(($total_length - $length)) "$length")
+	result=$(strings.slice "$string" $((total_length - length)) "$length")
 	strings.equals "$result" "$char"
 }
 
@@ -203,6 +203,6 @@ function strings.ends_with_ignore_case {
 	char="$2"
 	total_length=$(strings.length "$string")
 	length=$(strings.length "$char")
-	result=$(strings.slice "$string" $(($total_length - $length)) "$length")
+	result=$(strings.slice "$string" $((total_length - length)) "$length")
 	strings.equals_ignore_case "$result" "$char"
 }

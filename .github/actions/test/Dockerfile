@@ -1,8 +1,8 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y wget
+    apt install -y wget ca-certificates
 
 COPY  entrypoint.sh /entrypoint.sh
 

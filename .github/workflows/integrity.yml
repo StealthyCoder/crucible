@@ -15,6 +15,7 @@ jobs:
         uses: ./.github/actions/test
         with:
           which-shell: bash
+          crucible_location: ${{ github.ref_name }} 
       - name: shfmt BASH
         uses: ./.github/actions/shfmt
         with:
