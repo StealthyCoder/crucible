@@ -65,10 +65,11 @@ By running the following command you get a nice clean environment in which `cruc
 - [x] Cryptography
 - [x] Binary I/O
 - [x] File I/O
-- [ ] Network I/O
+- [x] Network I/O
 - [ ] Processes
 - [ ] [Classes](https://stealthycoder.writeas.com/crucible-the-future)
 - [ ] Http
+- [ ] DNS
 - [ ] [File Cache](https://stealthycoder.writeas.com/crucible-the-future)
 - [ ] [Memory Cache](https://stealthycoder.writeas.com/crucible-the-future)
 
