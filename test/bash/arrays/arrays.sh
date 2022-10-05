@@ -65,7 +65,7 @@ function arrays.arrays.add_all {
     arrays.transform_into_array a
     
     arrays.add_all a 1 2 3 4 5
-    
+ 
     test $? -eq 0 || fail "Could not add to array"
     __verify_nr_args "${#a[@]}" 5 arrays.arrays.add_all
     test $? -eq 0 || fail "Array does not contain all elements"
