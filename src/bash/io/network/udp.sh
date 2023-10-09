@@ -28,7 +28,7 @@ function network.udp.receive {
     fi
     local fd response
     fd="$1"
-    response=$(dd status=none count=1 <&$fd | od -vt x1 -A n | tr -d ' ' | tr -d '\n' | tr '[:lower:]' '[:upper:]')
+    response=$(dd status=none count=1 <&"$fd" | od -vt x1 -A n | tr -d ' ' | tr -d '\n' | tr '[:lower:]' '[:upper:]')
     local id params qr opcode aa tc rd ra z rcode
     id=$((16#${response:0:4}))
     maps.transform_into_map DNS_RESPONSE_"$id"
@@ -121,98 +121,98 @@ function network.udp.receive {
     maps.put DNS_RESPONSE_"$id" ANCOUNT $((16#${response:12:4}))
     maps.put DNS_RESPONSE_"$id" NSCOUNT $((16#${response:16:4}))
     maps.put DNS_RESPONSE_"$id" ARCOUNT $((16#${response:20:4}))
-		
-		# TODO: Handle ANCOUNT and ARCOUNT correctly
-		
-		# NOTE: Chop off first octal, read the rest as binary, then get that many octals chop off repeat until 0000 0000
 
-		local label labelcnt data label_offset data_offset qname aname
-		label=$((16#${response:24:2}))
-		label_offset=26
-		qname=""	
+    # TODO: Handle ANCOUNT and ARCOUNT correctly
 
-		while [[ "$label" -ne 0 ]]; do
-			for i in $(seq "$label"); do
-				data_offset=$(("$label_offset" + (2 * ("$i" -1))))
-				qname=$(strings.concat "$qname" $(printf "\x${response:data_offset:2}"))
-			done
-			qname=$(strings.concat "$qname" ".")
-			data_offset=$(("$data_offset" +  2 ))
-			label=$((16#${response:data_offset:2}))
-			label_offset=$(("$data_offset" + 2))
-		done
-		data_offset=$(("$data_offset" +  2 ))
-		maps.put DNS_RESPONSE_"$id" QNAME "$qname"
-		
-		case $((16#${response:data_offset:4})) in
-			1)
-				maps.put DNS_RESPONSE_"$id" QTYPE "A"
-				;;
-		esac
-		data_offset=$(("$data_offset" +  4 ))
-		case $((16#${response:data_offset:4})) in
-			1)
-				maps.put DNS_RESPONSE_"$id" QCLASS "IN"
-				;;
-		esac
-		data_offset=$(("$data_offset" +  4 ))
-		
-		local alabel alabel_offset a_start_offset adata_offset pointer
-		pointer=$(echo "obase=2; ibase=16; ${response:data_offset:4}" | bc)
-		pointer=${pointer:2}
-		a_start_offset=$(echo "obase=10; ibase=2; $pointer" | bc)
-		data_offset=$(("$data_offset" +  4 ))
-		
-		alabel=$((16#${response:$(("$a_start_offset" * 2)):2}))
-		alabel_offset=26
-		aname=""
+    # NOTE: Chop off first octal, read the rest as binary, then get that many octals chop off repeat until 0000 0000
 
-		while [[ "$alabel" -ne 0 ]]; do
-			for i in $(seq "$alabel"); do
-				adata_offset=$(("$alabel_offset" + (2 * ("$i" -1))))
-				aname=$(strings.concat "$aname" $(printf "\x${response:adata_offset:2}"))
-			done
-			aname=$(strings.concat "$aname" ".")
-			adata_offset=$(("$adata_offset" +  2 ))
-			alabel=$((16#${response:adata_offset:2}))
-			alabel_offset=$(("$adata_offset" + 2))
-		done
-		maps.put DNS_RESPONSE_"$id" ANAME "$aname"
+    local label labelcnt data label_offset data_offset qname aname
+    label=$((16#${response:24:2}))
+    label_offset=26
+    qname=""
 
-		case $((16#${response:data_offset:4})) in
-			1)
-				maps.put DNS_RESPONSE_"$id" ATYPE "A"
-				;;
-		esac
-		data_offset=$(("$data_offset" +  4 ))
-		case $((16#${response:data_offset:4})) in
-			1)
-				maps.put DNS_RESPONSE_"$id" ACLASS "IN"
-				;;
-		esac
-		data_offset=$(("$data_offset" +  4 ))
-		
-		maps.put DNS_RESPONSE_"$id" TTL $((16#${response:data_offset:8}))
-		data_offset=$(("$data_offset" +  8 ))
-		case $(maps.get DNS_RESPONSE_"$id" ATYPE) in
-			"A")
-			 	  maps.put DNS_RESPONSE_"$id" RDLENGTH "$((16#${response:data_offset:4}))"
-					data_offset=$(("$data_offset" +  4 ))
-					local ip	
-					ip=""
-					ip=$(strings.concat "$ip" $(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc))
-					ip=$(strings.concat "$ip" ".")
-					data_offset=$(("$data_offset" +  2 ))
-					ip=$(strings.concat "$ip" $(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc))
-					ip=$(strings.concat "$ip" ".")
-					data_offset=$(("$data_offset" +  2 ))
-					ip=$(strings.concat "$ip" $(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc))
-					ip=$(strings.concat "$ip" ".")
-					data_offset=$(("$data_offset" +  2 ))
-					ip=$(strings.concat "$ip" $(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc))
-			 	  maps.put DNS_RESPONSE_"$id" RDATA "$ip"
-				;;
-		esac
+    while [[ "$label" -ne 0 ]]; do
+        for i in "$(seq "$label")"; do
+            data_offset=$(("$label_offset" + (2 * ("$i" -1))))
+            qname=$(strings.concat "$qname" "$(printf "\x${response:data_offset:2}")")
+        done
+        qname=$(strings.concat "$qname" ".")
+        data_offset=$(("$data_offset" +  2 ))
+        label=$((16#${response:data_offset:2}))
+        label_offset=$(("$data_offset" + 2))
+    done
+    data_offset=$(("$data_offset" +  2 ))
+    maps.put DNS_RESPONSE_"$id" QNAME "$qname"
+
+    case $((16#${response:data_offset:4})) in
+        1)
+            maps.put DNS_RESPONSE_"$id" QTYPE "A"
+            ;;
+    esac
+    data_offset=$(("$data_offset" +  4 ))
+    case $((16#${response:data_offset:4})) in
+        1)
+            maps.put DNS_RESPONSE_"$id" QCLASS "IN"
+            ;;
+    esac
+    data_offset=$(("$data_offset" +  4 ))
+
+    local alabel alabel_offset a_start_offset adata_offset pointer
+    pointer=$(echo "obase=2; ibase=16; ${response:data_offset:4}" | bc)
+    pointer=${pointer:2}
+    a_start_offset=$(echo "obase=10; ibase=2; $pointer" | bc)
+    data_offset=$(("$data_offset" +  4 ))
+
+    alabel=$((16#${response:$(("$a_start_offset" * 2)):2}))
+    alabel_offset=26
+    aname=""
+
+    while [[ "$alabel" -ne 0 ]]; do
+        for i in "$(seq "$alabel")"; do
+            adata_offset=$(("$alabel_offset" + (2 * ("$i" -1))))
+            aname=$(strings.concat "$aname" "$(printf "\x${response:adata_offset:2}")")
+        done
+        aname=$(strings.concat "$aname" ".")
+        adata_offset=$(("$adata_offset" +  2 ))
+        alabel=$((16#${response:adata_offset:2}))
+        alabel_offset=$(("$adata_offset" + 2))
+    done
+    maps.put DNS_RESPONSE_"$id" ANAME "$aname"
+
+    case $((16#${response:data_offset:4})) in
+        1)
+            maps.put DNS_RESPONSE_"$id" ATYPE "A"
+            ;;
+    esac
+    data_offset=$(("$data_offset" +  4 ))
+    case $((16#${response:data_offset:4})) in
+        1)
+            maps.put DNS_RESPONSE_"$id" ACLASS "IN"
+            ;;
+    esac
+    data_offset=$(("$data_offset" +  4 ))
+
+    maps.put DNS_RESPONSE_"$id" TTL $((16#${response:data_offset:8}))
+    data_offset=$(("$data_offset" +  8 ))
+    case $(maps.get DNS_RESPONSE_"$id" ATYPE) in
+        "A")
+            maps.put DNS_RESPONSE_"$id" RDLENGTH "$((16#${response:data_offset:4}))"
+            data_offset=$(("$data_offset" +  4 ))
+            local ip
+            ip=""
+            ip=$(strings.concat "$ip" "$(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc)")
+            ip=$(strings.concat "$ip" ".")
+            data_offset=$(("$data_offset" +  2 ))
+            ip=$(strings.concat "$ip" "$(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc)")
+            ip=$(strings.concat "$ip" ".")
+            data_offset=$(("$data_offset" +  2 ))
+            ip=$(strings.concat "$ip" "$(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc)")
+            ip=$(strings.concat "$ip" ".")
+            data_offset=$(("$data_offset" +  2 ))
+            ip=$(strings.concat "$ip" "$(echo "obase=10; ibase=16; ${response:data_offset:2}" | bc)")
+            maps.put DNS_RESPONSE_"$id" RDATA "$ip"
+            ;;
+    esac
 }
 
 function network.udp {
@@ -238,7 +238,7 @@ function network.udp {
                 exit 1
             fi
             local available_fd
-            for fd in $(ls /proc/$$/fd); do
+            for fd in "$(ls /proc/$$/fd)"; do
                 if test "$fd" -lt 255; then
                     available_fd="$fd"
                 elif test "$fd" -eq 255; then
@@ -263,7 +263,7 @@ function network.udp {
                 exit 1
             fi
             local available_fd
-            for fd in $(ls /proc/$$/fd); do
+            for fd in "$(ls /proc/$$/fd)"; do
                 if test "$fd" -lt 255; then
                     available_fd="$fd"
                 elif test "$fd" -eq 255; then
@@ -309,4 +309,11 @@ function network.udp {
             echo "$(network.udp_receive "$available_fd")"
             ;;
     esac
+}
+
+function network.udp.close {
+    __verify_nr_args "$#" 1 network.close
+    local fd
+    fd=$1
+    exec "$fd"<&-
 }

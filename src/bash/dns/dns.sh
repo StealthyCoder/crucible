@@ -19,4 +19,6 @@ function dns.poc {
     logging.info "Things left:"
     logging.info "1. Write different query types (A, AAAA, TXT...)"
     logging.info "2. Parse input into request"
+    network.udp.close "$CRUCIBLE_NETWORK_FD"
+    ls /proc/$$/fd
 }

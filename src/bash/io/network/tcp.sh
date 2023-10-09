@@ -11,7 +11,7 @@ require logging/logging
 require arrays/arrays
 
 function network.tcp.send {
-	__verify_nr_args "$#" 2 network.tcp_send
+	__verify_nr_args "$#" 2 network.tcp.send
 	local fd data
 	fd="$1"
 	data="$2"
@@ -19,7 +19,7 @@ function network.tcp.send {
 }
 
 function network.tcp.receive {
-	__verify_nr_args "$#" 1 network.tcp_receive
+	__verify_nr_args "$#" 1 network.tcp.receive
 	local fd response
 	fd="$1"
 	response=$(cat <&$fd)
@@ -128,4 +128,10 @@ function network.tcp {
 		echo "$(network.tcp_receive "$available_fd")"
 		;;
 	esac
+}
+function network.tcp.close {
+    __verify_nr_args "$#" 1 network.close
+    local fd
+    fd=$1
+    exec "$fd"<&-
 }
