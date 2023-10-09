@@ -3,189 +3,189 @@ CRUCIBLE_VERSION=0.2.8
 CRUCIBLE_LOCATION=${CRUCIBLE_LOCATION:-develop}
 
 function get_uuid {
-	grep 'id' .crucible | cut -d'=' -f 2
+    grep 'id' .crucible | cut -d'=' -f 2
 }
 
 function generate_uuid {
-	local uuid
-	uuid="$(head -c 1K </dev/urandom | sha256sum -bz | cut -d' ' -f1 | tr -dc '[:print:]')"
-	echo "$uuid"
+    local uuid
+    uuid="$(head -c 1K </dev/urandom | sha256sum -bz | cut -d' ' -f1 | tr -dc '[:print:]')"
+    echo "$uuid"
 }
 
 function get_shared_dir {
-	if [ -z "$XDG_DATA_HOME" ]; then
-		echo "$HOME/.local/share"
-	else
-		echo "$XDG_DATA_HOME"
-	fi
+    if [ "$XDG_DATA_HOME" = "" ]; then
+        echo "$HOME/.local/share"
+    else
+        echo "$XDG_DATA_HOME"
+    fi
 }
 
 function get_main_file {
-	grep 'main_file' .crucible | cut -d'=' -f 2
+    grep 'main_file' .crucible | cut -d'=' -f 2
 }
 
 function get_project_name {
-	grep 'project_name' .crucible | cut -d'=' -f 2
+    grep 'project_name' .crucible | cut -d'=' -f 2
 }
 
 function generate_mould {
-	wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/$CRUCIBLE_LOCATION/src/bash/core/mould.sh"
+    wget -q -O .mould "https://raw.githubusercontent.com/StealthyCoder/crucible/$CRUCIBLE_LOCATION/src/bash/core/mould.sh"
 }
 
 function create_local_crucible {
-	local shared_dir
-	shared_dir="$(get_shared_dir)/crucible/$1"
-	{
-		echo "id=$1"
-		echo "working_dir=$(pwd)"
-		echo "shared_dir=$shared_dir"
-		echo "version=$CRUCIBLE_VERSION"
-		echo "location=$CRUCIBLE_LOCATION"
-		echo "project_name=$2"
-		echo "main_file=$3"
-		echo "author=$(whoami)"
-		echo "created=$(date +%s)"
-	} >>.crucible
+    local shared_dir
+    shared_dir="$(get_shared_dir)/crucible/$1"
+    {
+        echo "id=$1"
+        echo "working_dir=$PWD"
+        echo "shared_dir=$shared_dir"
+        echo "version=$CRUCIBLE_VERSION"
+        echo "location=$CRUCIBLE_LOCATION"
+        echo "project_name=$2"
+        echo "main_file=$3"
+        echo "author=$(whoami)"
+        echo "created=$(date +%s)"
+    } >>.crucible
 
-	{
-		echo "#!/usr/bin/env bash"
-		echo ""
-		echo "source .mould"
-	} >>"$3"
-	chmod +x "$3"
-	generate_mould
+    {
+        echo "#!/usr/bin/env bash"
+        echo ""
+        echo "source .mould"
+    } >>"$3"
+    chmod +x "$3"
+    generate_mould
 }
 
 function create_shared_crucible {
-	local shared_dir
-	shared_dir="$(get_shared_dir)"
-	if [ ! -d "$shared_dir/$1" ]; then
-		mkdir "$shared_dir/crucible/$1" -p
-	fi
-	cp .crucible "$shared_dir/crucible/$1/.crucible"
+    local shared_dir
+    shared_dir="$(get_shared_dir)"
+    if [ ! -d "$shared_dir/$1" ]; then
+        mkdir "$shared_dir/crucible/$1" -p
+    fi
+    cp .crucible "$shared_dir/crucible/$1/.crucible"
 }
 
 function ask {
-	read -r -p "$1" var
-	echo "$var"
+    read -r -p "$1" var
+    echo "$var"
 }
 
 function ask_project_name {
-	ask 'What will be the name given to this project? '
+    ask 'What will be the name given to this project? '
 }
 
 function ask_main_file {
-	ask 'What will be the name given to the main file? '
+    ask 'What will be the name given to the main file? '
 }
 
 function init {
-	if [ ! -f .crucible ]; then
-		local UUID PROJECT_NAME MAIN_FILE
-		UUID="$(generate_uuid)"
-		PROJECT_NAME="$(ask_project_name)"
-		MAIN_FILE="$(ask_main_file)"
-		create_local_crucible "$UUID" "$PROJECT_NAME" "$MAIN_FILE"
-		create_shared_crucible "$UUID"
-	fi
+    if [ ! -f .crucible ]; then
+        local UUID PROJECT_NAME MAIN_FILE
+        UUID="$(generate_uuid)"
+        PROJECT_NAME="$(ask_project_name)"
+        MAIN_FILE="$(ask_main_file)"
+        create_local_crucible "$UUID" "$PROJECT_NAME" "$MAIN_FILE"
+        create_shared_crucible "$UUID"
+    fi
 }
 
 function update {
-	local UUID share_dir
-	UUID="$(get_uuid)"
-	share_dir="$(get_shared_dir)"
-	sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
-	sed -i .crucible -e "s/^location=.*$/location=${CRUCIBLE_LOCATION//\//\\\/}/g"
-	cp .crucible "$share_dir/crucible/$UUID/.crucible"
-	generate_mould
+    local UUID share_dir
+    UUID="$(get_uuid)"
+    share_dir="$(get_shared_dir)"
+    sed -i .crucible -e "s/version=[0-9].[0-9].[0-9]/version=$CRUCIBLE_VERSION/g"
+    sed -i .crucible -e "s/^location=.*$/location=${CRUCIBLE_LOCATION//\//\\\/}/g"
+    cp .crucible "$share_dir/crucible/$UUID/.crucible"
+    generate_mould
 }
 
 function purge {
-	local confirmation UUID share_dir
-	confirmation="$(ask 'Are you sure you want to purge this project? y/N ')"
-	if [ "$confirmation" == "y" ] || [ "$confirmation" == "Y" ]; then
-		echo "Purging.."
-		UUID="$(get_uuid)"
-		share_dir="$(get_shared_dir)"
-		rm -r ./* .crucible .mould
-		rm -r "$share_dir/crucible/$UUID/"
-		echo "Purged"
-	else
-		echo "Nothing will be done."
-	fi
+    local confirmation UUID share_dir
+    confirmation="$(ask 'Are you sure you want to purge this project? y/N ')"
+    if [ "$confirmation" == "y" ] || [ "$confirmation" == "Y" ]; then
+        echo "Purging.."
+        UUID="$(get_uuid)"
+        share_dir="$(get_shared_dir)"
+        rm -r ./* .crucible .mould
+        rm -r "$share_dir/crucible/$UUID/"
+        echo "Purged"
+    else
+        echo "Nothing will be done."
+    fi
 }
 
 function pour {
-	local UUID share_dir cur_dir temp_dir project_name main_file
-	UUID="$(get_uuid)"
-	cur_dir="$(pwd)"
-	share_dir="$(get_shared_dir)"
-	temp_dir="$(mktemp -d)"
-	project_name="$(get_project_name)"
+    local UUID share_dir cur_dir temp_dir project_name main_file
+    UUID="$(get_uuid)"
+    cur_dir="$PWD"
+    share_dir="$(get_shared_dir)"
+    temp_dir="$(mktemp -d)"
+    project_name="$(get_project_name)"
 
-	if [ ! -d "dist" ]; then
-		mkdir dist
-	else
-		rm dist/*
-	fi
+    if [ ! -d "dist" ]; then
+        mkdir dist
+    else
+        rm dist/*
+    fi
 
-	touch "$temp_dir/.lib"
+    touch "$temp_dir/.lib"
 
-	cd "$share_dir/crucible/$UUID/" || exit 1
+    cd "$share_dir/crucible/$UUID/" || exit 1
 
-	shopt -s globstar dotglob
-	for f in ./**/*; do
-		if [ ! -d "$f" ]; then
-			if [ ! "$f" == ".crucible" ]; then
-				t="$(mktemp)"
-				cat "$f" >"$t"
-				sed -i '/^require/d' "$t"
-				sed -i '/^\#/d' "$t"
-				cat "$t" >>"$temp_dir/.lib"
-				rm "$t"
-			fi
-		fi
-	done
-	shopt -u globstar dotglob
+    shopt -s globstar dotglob
+    for f in ./**/*; do
+        if [ ! -d "$f" ]; then
+            if [ ! "$f" == ".crucible" ]; then
+                t="$(mktemp)"
+                cat "$f" >"$t"
+                sed -i '/^require/d' "$t"
+                sed -i '/^\#/d' "$t"
+                cat "$t" >>"$temp_dir/.lib"
+                rm "$t"
+            fi
+        fi
+    done
+    shopt -u globstar dotglob
 
-	cd "$cur_dir" || exit 1
-	t="$(mktemp)"
-	main_file="$(get_main_file)"
-	cat "$main_file" >"$t"
-	sed -i '/^require/d' "$t"
-	sed -i 's/\.mould/\.lib/' "$t"
-	mv "$t" "/$temp_dir/$main_file"
-	chmod +x "/$temp_dir/$main_file"
+    cd "$cur_dir" || exit 1
+    t="$(mktemp)"
+    main_file="$(get_main_file)"
+    cat "$main_file" >"$t"
+    sed -i '/^require/d' "$t"
+    sed -i 's/\.mould/\.lib/' "$t"
+    mv "$t" "/$temp_dir/$main_file"
+    chmod +x "/$temp_dir/$main_file"
 
-	cd "$temp_dir" || exit 1
-	tar cf "$project_name.tar.gz" .lib "$main_file"
-	mv "$project_name.tar.gz" "$cur_dir/dist/"
+    cd "$temp_dir" || exit 1
+    tar czf "$project_name.tar.gz" .lib "$main_file"
+    mv "$project_name.tar.gz" "$cur_dir/dist/"
 
-	cd "$cur_dir" || return
-	rm -r "$temp_dir"
+    cd "$cur_dir" || return
+    rm -r "$temp_dir"
 }
 
 case $1 in
-init)
-	init
-	;;
-update)
-	update
-	;;
-purge)
-	purge
-	;;
-pour)
-	pour
-	;;
-"" | help)
-	echo -e "Possible values are:\\n"
-	echo "init - Initialise a directory as a Crucible project"
-	echo "update - Update current project with new version"
-	echo "purge - Remove all files belonging to this project"
-	echo "pour - Create a distributable tarball with script in there"
-	echo "help - Print this help message"
-	;;
-*)
-	echo "Unsupported command $1"
-	;;
+    init)
+        init
+        ;;
+    update)
+        update
+        ;;
+    purge)
+        purge
+        ;;
+    pour)
+        pour
+        ;;
+    "" | help)
+        echo -e "Possible values are:\\n"
+        echo "init - Initialise a directory as a Crucible project"
+        echo "update - Update current project with new version"
+        echo "purge - Remove all files belonging to this project"
+        echo "pour - Create a distributable tarball with script in there"
+        echo "help - Print this help message"
+        ;;
+    *)
+        echo "Unsupported command $1"
+        ;;
 esac
