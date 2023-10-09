@@ -238,7 +238,7 @@ function network.udp {
                 exit 1
             fi
             local available_fd
-            for fd in "$(ls /proc/$$/fd)"; do
+            for fd in $(ls /proc/$$/fd); do
                 if test "$fd" -lt 255; then
                     available_fd="$fd"
                 elif test "$fd" -eq 255; then
@@ -263,7 +263,7 @@ function network.udp {
                 exit 1
             fi
             local available_fd
-            for fd in "$(ls /proc/$$/fd)"; do
+            for fd in $(ls /proc/$$/fd); do
                 if test "$fd" -lt 255; then
                     available_fd="$fd"
                 elif test "$fd" -eq 255; then
@@ -297,7 +297,7 @@ function network.udp {
                 exit 1
             fi
             local available_fd
-            for fd in "$(ls /proc/$$/fd)"; do
+            for fd in $(ls /proc/$$/fd); do
                 if test "$fd" -lt 255; then
                     available_fd="$fd"
                 elif test "$fd" -eq 255; then
