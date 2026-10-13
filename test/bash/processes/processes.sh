@@ -19,7 +19,8 @@ tests+=("processes.processes.signal" "processes.processes.terminate")
 tests+=("processes.processes.terminate_stubborn")
 tests+=("processes.processes.inspect")
 tests+=("processes.processes.list_and_find")
-tests+=("processes.processes.run_with_timeout")
+tests+=("processes.processes.run_with_timeout" "processes.processes.run_with_timeout_kills")
+tests+=("processes.processes.run_with_timeout_is_not_racy")
 tests+=("processes.processes.invalid_arguments")
 
 function processes.processes.sleep {
@@ -177,6 +178,36 @@ function processes.processes.run_with_timeout {
     test $((SECONDS - start)) -le 3 || fail "The command was not stopped in time"
     processes.run_with_timeout 5 true
     test -z "$(jobs -p)" || fail "The timer was left running"
+    success
+}
+
+function processes.processes.run_with_timeout_kills {
+    intro "processes.run_with_timeout kills what ignores TERM"
+    local start
+    start=$SECONDS
+    CRUCIBLE_PROCESSES_KILL_AFTER=1 processes.run_with_timeout 1 bash -c 'trap "" TERM; while :; do read -t 1 <> <(:); done'
+    assert_equals "124" "$?" "status of a command that ignores TERM"
+    test $((SECONDS - start)) -le 5 || fail "The command was not killed in time: $((SECONDS - start)) seconds"
+    success
+}
+
+function processes.processes.run_with_timeout_is_not_racy {
+    intro "processes.run_with_timeout gives the same answer every time"
+    local i wrong
+    wrong=""
+    # The command is stopped at the moment the watcher is on its way out; that used to look like a normal exit
+    for i in $(seq 1 40); do
+        processes.run_with_timeout 0.05 sleep 30
+        [ "$?" -eq 124 ] || wrong+="$i "
+    done
+    test -z "$wrong" || fail "Runs that did not report a timeout: $wrong"
+    wrong=""
+    for i in $(seq 1 20); do
+        processes.run_with_timeout 5 bash -c 'exit 3'
+        [ "$?" -eq 3 ] || wrong+="$i "
+    done
+    test -z "$wrong" || fail "Runs that did not report the status of the command: $wrong"
+    test -z "$(jobs -p)" || fail "Watchers were left running"
     success
 }
 

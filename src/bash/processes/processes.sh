@@ -142,32 +142,47 @@ function processes.terminate {
 	fi
 }
 
-# Runs a command and stops it when it takes longer than the seconds given.
+# Runs a command and stops it when it takes longer than the seconds given: it
+# is asked to stop with TERM and killed when it is still there after
+# CRUCIBLE_PROCESSES_KILL_AFTER seconds, 5 unless set.
 # The status is that of the command, or 124 when it had to be stopped.
+#
+# The watcher says "fired" in a pipe before it signals the command, so when the
+# command is gone the answer to "was it stopped" is already there. Looking at
+# whether the watcher is still alive instead is a race: it can be on its way out.
+# Usage: processes.run_with_timeout <seconds> <command> [argument]...
 function processes.run_with_timeout {
 	if [ "$#" -lt 2 ]; then
-		logging.error "processes.run_with_timeout: usage is processes.run_with_timeout <SECONDS> <COMMAND> [ARGUMENTS]"
+		logging.error "processes.run_with_timeout: usage is processes.run_with_timeout <SECONDS> <COMMAND> [ARGUMENT]..."
 		return 1
 	fi
-	local seconds pid watcher status
+	local seconds pid watcher status fired_fd timed_out
 	seconds="$1"
 	shift
 	"$@" &
 	pid=$!
-	(
+	exec {fired_fd}< <(
 		processes.sleep "$seconds"
+		echo fired
 		kill -s TERM "$pid" 2>/dev/null
-	) &
+		processes.sleep "${CRUCIBLE_PROCESSES_KILL_AFTER:-5}"
+		kill -s KILL "$pid" 2>/dev/null
+	)
 	watcher=$!
 	wait "$pid"
 	status=$?
-	# The watcher only ends by itself after it stopped the command
-	if kill -0 "$watcher" 2>/dev/null; then
-		kill "$watcher" 2>/dev/null
-		wait "$watcher" 2>/dev/null
-		return "$status"
+	timed_out=1
+	# read -t 0 only asks whether something can be read
+	if IFS= read -r -t 0 -u "$fired_fd"; then
+		timed_out=0
 	fi
-	return 124
+	kill -s KILL "$watcher" 2>/dev/null
+	wait "$watcher" 2>/dev/null
+	exec {fired_fd}<&-
+	if [ "$timed_out" -eq 0 ]; then
+		return 124
+	fi
+	return "$status"
 }
 
 # Prints the state of a process: R running, S sleeping, D waiting for the disk,

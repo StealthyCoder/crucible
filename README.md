@@ -73,7 +73,7 @@ A module is loaded with `require`, for example `require strings/strings`. Every 
 processes.spawn sleep 30                  # the process id is in CRUCIBLE_LAST_PID
 processes.is_running "$CRUCIBLE_LAST_PID" # a zombie is not running
 processes.terminate "$CRUCIBLE_LAST_PID"  # TERM, and KILL after 5 seconds
-processes.run_with_timeout 10 some-command arg   # 124 when it had to be stopped
+processes.run_with_timeout 10 some-command arg   # 124 when it had to be stopped: TERM, and KILL after CRUCIBLE_PROCESSES_KILL_AFTER (5) seconds
 processes.sleep 0.5                       # without starting sleep
 processes.find_by_name sshd; processes.children $$; processes.command_line 1
 ```
