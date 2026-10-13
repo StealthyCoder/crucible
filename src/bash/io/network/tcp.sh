@@ -8,8 +8,8 @@
 require core/.internal
 require io/network/.internal
 require logging/logging
-require arrays/arrays
 
+# Sends the data followed by a newline, escape sequences like \r\n are interpreted
 function network.tcp.send {
 	__verify_nr_args "$#" 2 network.tcp.send
 	local fd data
@@ -18,12 +18,59 @@ function network.tcp.send {
 	echo -e "$data" >&"$fd"
 }
 
-function network.tcp.receive {
-	__verify_nr_args "$#" 1 network.tcp.receive
-	local fd response
+# Sends the data exactly as given, escape sequences like \r\n are interpreted
+# but nothing is appended
+function network.tcp.send_raw {
+	__verify_nr_args "$#" 2 network.tcp.send_raw
+	local fd data
 	fd="$1"
-	response=$(cat <&"$fd")
-	echo "$response"
+	data="$2"
+	printf '%b' "$data" >&"$fd"
+}
+
+# Reads until the other side closes the connection. The timeout in seconds is
+# how long the connection may stay silent, CRUCIBLE_NETWORK_TIMEOUT is the
+# default and no timeout is used when neither is given.
+# Text only, bash cannot hold NUL bytes so those are left out.
+function network.tcp.receive {
+	if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+		logging.error "network.tcp.receive: usage is network.tcp.receive <FD> [TIMEOUT]"
+		exit 1
+	fi
+	local fd chunk response timeout_seconds
+	local -a timeout_args
+	fd="$1"
+	timeout_seconds="${2:-${CRUCIBLE_NETWORK_TIMEOUT:-0}}"
+	timeout_args=()
+	if [[ "$timeout_seconds" != "0" ]]; then
+		timeout_args=(-t "$timeout_seconds")
+	fi
+	response=""
+	while IFS= read -r "${timeout_args[@]}" -N 65536 -u "$fd" chunk; do
+		response+="$chunk"
+	done
+	response+="$chunk"
+	printf '%s\n' "$response"
+}
+
+# Reads exactly <COUNT> bytes and prints them as hexadecimal digits, NUL bytes included.
+function network.tcp.receive_hex {
+	if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+		logging.error "network.tcp.receive_hex: usage is network.tcp.receive_hex <FD> <COUNT> [TIMEOUT]"
+		exit 1
+	fi
+	__read_bytes_hex "$1" "$2" "${3:-${CRUCIBLE_NETWORK_TIMEOUT:-0}}"
+}
+
+# Sends bytes that are given as hexadecimal digits, for example 0A1B
+function network.tcp.send_hex {
+	__verify_nr_args "$#" 2 network.tcp.send_hex
+	network._send_hex "$1" "$2"
+}
+
+function network.tcp.close {
+	__verify_nr_args "$#" 1 network.tcp.close
+	network._close "$1"
 }
 
 function network.tcp {
@@ -34,104 +81,23 @@ function network.tcp {
 	#  on 4+ - we log warning that surplus is ignored
 	case "$#" in
 	0 | 1)
-		logging.error "network.tcp: Wrong number of arguments, need at least 2 or 3."
-		logging.error "network.tcp: usage is network.tcp <HOST> <PORT>"
-		logging.error "to setup a file descriptor to send messages"
-		logging.error "network.tcp: usage is network.tcp <HOST> <PORT> <DATA>"
-		logging.error "to send one message and immediately get response"
+		network._usage tcp
 		exit 1
 		;;
 	2)
-		#	4. exec 3<>/dev/tcp/www.google.com/80
-		# echo -e "GET / HTTP/1.1\r\nhost: http://www.google.com\r\nConnection: close\r\n\r\n" >&3
-		# cat <&3
-		local host port
-		host="$1"
-		port="$2"
-		if ! network.verify_host "$host"; then
-			logging.error "Invalid hostname: $host"
-			exit 1
-		fi
-		if ! network.verify_port "$port"; then
-			logging.error "Invalid port: $port"
-			exit 1
-		fi
-		local available_fd
-		for fd in $(ls /proc/$$/fd); do
-			if test "$fd" -lt 255; then
-				available_fd="$fd"
-			elif test "$fd" -eq 255; then
-				available_fd="$(($available_fd + 1))"
-			fi
-		done
-		eval "exec $available_fd<>/dev/tcp/$host/$port"
-		export CRUCIBLE_NETWORK_FD="$available_fd"
-		logging.debug "Exported CRUCIBLE_NETWORK_FD to value: $available_fd"
-		;;
-	3)
-		local host port data
-		host="$1"
-		port="$2"
-		data="$3"
-		if ! network.verify_host "$host"; then
-			logging.error "Invalid hostname: $host"
-			exit 1
-		fi
-		if ! network.verify_port "$port"; then
-			logging.error "Invalid port: $port"
-			exit 1
-		fi
-		local available_fd
-		for fd in $(ls /proc/$$/fd); do
-			if test "$fd" -lt 255; then
-				available_fd="$fd"
-			elif test "$fd" -eq 255; then
-				available_fd="$(($available_fd + 1))"
-			fi
-		done
-		eval "exec $available_fd<>/dev/tcp/$host/$port"
-		network.tcp_send "$available_fd" "$data"
-		echo "$(network.tcp_receive "$available_fd")"
+		network._connect tcp "$1" "$2" CRUCIBLE_NETWORK_FD || return 1
+		export CRUCIBLE_NETWORK_FD
+		logging.debug "Exported CRUCIBLE_NETWORK_FD to value: $CRUCIBLE_NETWORK_FD"
 		;;
 	*)
-		arrays.transform_into_array args
-		arrays.add_all args "$@"
-		local surplus i
-		surplus=""
-		for ((i = 3; i < ${#args[@]}; i++)); do
-			surplus+=" ${args[$i]}"
-		done
-		logging.warning "Ignoring surplus:$surplus"
-		unset args
-		local host port data
-		host="$1"
-		port="$2"
-		data="$3"
-		if ! network.verify_host "$host"; then
-			logging.error "Invalid hostname: $host"
-			exit 1
+		if [ "$#" -gt 3 ]; then
+			logging.warning "Ignoring surplus: ${*:4}"
 		fi
-		if ! network.verify_port "$port"; then
-			logging.error "Invalid port: $port"
-			exit 1
-		fi
-		local available_fd
-		for fd in $(ls /proc/$$/fd); do
-			if test "$fd" -lt 255; then
-				available_fd="$fd"
-			elif test "$fd" -eq 255; then
-				available_fd="$(($available_fd + 1))"
-			fi
-		done
-		eval "exec $available_fd<>/dev/tcp/$host/$port"
-		network.tcp_send "$available_fd" "$data"
-		echo "$(network.tcp_receive "$available_fd")"
+		local fd
+		network._connect tcp "$1" "$2" fd || return 1
+		network.tcp.send "$fd" "$3"
+		network.tcp.receive "$fd" "${CRUCIBLE_NETWORK_TIMEOUT:-10}"
+		network.tcp.close "$fd"
 		;;
 	esac
-}
-function network.tcp.close {
-	__verify_nr_args "$#" 1 network.close
-	local fd
-	fd=$1
-	exec "$fd" <&-
 }

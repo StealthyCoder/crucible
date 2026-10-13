@@ -5,20 +5,20 @@
 # CRUCIBLE_CREATED={CRUCIBLE_CREATED}
 ### CRUCIBLE META DATA ###
 
-require io/network/udp
+require io/network/tcp
 
+# Answers are binary and full of NUL bytes, bash can only read those exactly
+# from a stream. That is why DNS is done over TCP (RFC 1035 section 4.2.2):
+# the same messages as over UDP, each preceded by its length in two bytes.
 function dns.poc {
-	local response
-	network.udp 8.8.8.8 53
+	local length
+	network.tcp 8.8.8.8 53
 	# RECORD symbolizing QUERY for A for example.com
 	# https://routley.io/posts/hand-writing-dns-messages
 	# NOTE: ID = AAAA in decimal is 43690
-	printf "\xAA\xAA\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07\x65\x78\x61\x6d\x70\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01" >&"$CRUCIBLE_NETWORK_FD"
-	network.udp.receive "$CRUCIBLE_NETWORK_FD"
-	maps.entries DNS_RESPONSE_43690
-	logging.info "Things left:"
-	logging.info "1. Write different query types (A, AAAA, TXT...)"
-	logging.info "2. Parse input into request"
-	network.udp.close "$CRUCIBLE_NETWORK_FD"
-	ls /proc/$$/fd
+	network.tcp.send_hex "$CRUCIBLE_NETWORK_FD" "001DAAAA01000001000000000000076578616D706C6503636F6D0000010001"
+	length="$(network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 2 5)"
+	logging.info "Length of the answer: $((16#$length))"
+	logging.info "$(network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" $((16#$length)) 5)"
+	network.tcp.close "$CRUCIBLE_NETWORK_FD"
 }
