@@ -12,7 +12,7 @@ function dirs.dir_set_group_read_only_clear {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_read_only_clear
 	local target
 	target="$1"
-	dirs.dir_set_perms "$target" "g=r,ug-rxw"
+	dirs.dir_set_perms "$target" "g=r,uo-rxw"
 }
 
 function dirs.dir_set_group_read_only {
@@ -54,7 +54,7 @@ function dirs.dir_set_group_write_only_clear {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_write_only_clear
 	local target
 	target="$1"
-	dirs.dir_set_perms "$target" "g=w,ug-rxw"
+	dirs.dir_set_perms "$target" "g=w,uo-rxw"
 }
 
 function dirs.dir_set_group_write_only {
@@ -96,7 +96,7 @@ function dirs.dir_set_group_execute_only_clear {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_execute_only_clear
 	local target
 	target="$1"
-	dirs.dir_set_perms "$target" "g=x,ug-rxw"
+	dirs.dir_set_perms "$target" "g=x,uo-rxw"
 }
 
 function dirs.dir_set_group_execute_only {
@@ -238,7 +238,7 @@ function dirs.dir_set_group_read_only_clear_recursive {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_read_only_clear_recursive
 	local target
 	target="$1"
-	dirs.dir_set_perms_recursive "$target" "g=r,ug-rxw"
+	dirs.dir_set_perms_recursive "$target" "g=r,uo-rxw"
 }
 
 function dirs.dir_set_group_read_only_recursive {
@@ -280,7 +280,7 @@ function dirs.dir_set_group_write_only_clear_recursive {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_write_only_clear_recursive
 	local target
 	target="$1"
-	dirs.dir_set_perms_recursive "$target" "g=w,ug-rxw"
+	dirs.dir_set_perms_recursive "$target" "g=w,uo-rxw"
 }
 
 function dirs.dir_set_group_write_only_recursive {
@@ -322,7 +322,7 @@ function dirs.dir_set_group_execute_only_clear_recursive {
 	__verify_nr_args "$#" 1 dirs.dir_set_group_execute_only_clear_recursive
 	local target
 	target="$1"
-	dirs.dir_set_perms_recursive "$target" "g=x,ug-rxw"
+	dirs.dir_set_perms_recursive "$target" "g=x,uo-rxw"
 }
 
 function dirs.dir_set_group_execute_only_recursive {

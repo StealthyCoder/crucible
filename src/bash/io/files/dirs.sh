@@ -34,7 +34,7 @@ function dirs.create_dir_local {
 }
 
 function dirs.move_dir {
-	dirs.rename_dir "$*"
+	dirs.rename_dir "$@"
 }
 
 function dirs.delete_dir {
@@ -62,6 +62,7 @@ function dirs.copy_dir {
 function dirs.dir_exists {
 	__verify_nr_args "$#" 1 dirs.dir_exists
 	local target result
+	target="$1"
 	if [ -d "$target" ]; then
 		result=1
 	else
@@ -243,5 +244,5 @@ function dirs.dir_copy_perms_recursive {
 	local target reference
 	target="$1"
 	reference="$2"
-	__sudo chmod --reference --reference="$reference" "$target"
+	__sudo chmod --recursive --reference="$reference" "$target"
 }

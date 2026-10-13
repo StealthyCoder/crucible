@@ -18,7 +18,7 @@ function files.rename_file {
 }
 
 function files.move_file {
-	files.rename_file "$*"
+	files.rename_file "$@"
 }
 
 function files.delete_file {
@@ -74,7 +74,7 @@ function files.create_file {
 
 function files.file_change_owner_group {
 	__verify_nr_args "$#" 3 files.file_change_owner_group
-	local target owner group result
+	local target owner group
 	target="$1"
 	owner="$2"
 	group="$3"

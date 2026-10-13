@@ -169,11 +169,11 @@ function dirs.dir_add_other_read_execute_only {
 	dirs.dir_set_perms "$target" "o+rx"
 }
 
-function dirs.dir_add_group_write_execute_only {
-	__verify_nr_args "$#" 1 dirs.dir_add_group_write_execute_only
+function dirs.dir_add_other_write_execute_only {
+	__verify_nr_args "$#" 1 dirs.dir_add_other_write_execute_only
 	local target
 	target="$1"
-	dirs.dir_set_perms "$target" "g+wx"
+	dirs.dir_set_perms "$target" "o+wx"
 }
 
 function dirs.dir_add_other_read_write_execute_only {
@@ -395,11 +395,11 @@ function dirs.dir_add_other_read_execute_only_recursive {
 	dirs.dir_set_perms_recursive "$target" "o+rx"
 }
 
-function dirs.dir_add_group_write_execute_only_recursive {
-	__verify_nr_args "$#" 1 dirs.dir_add_group_write_execute_only_recursive
+function dirs.dir_add_other_write_execute_only_recursive {
+	__verify_nr_args "$#" 1 dirs.dir_add_other_write_execute_only_recursive
 	local target
 	target="$1"
-	dirs.dir_set_perms_recursive "$target" "g+wx"
+	dirs.dir_set_perms_recursive "$target" "o+wx"
 }
 
 function dirs.dir_add_other_read_write_execute_only_recursive {

@@ -19,11 +19,11 @@ function files.change_dir {
 	__verify_nr_args "$#" 1 files.change_dir
 	local path
 	path="$1"
-	pushd "$path" >/dev/null
+	pushd "$path" >/dev/null || return
 }
 
 function files.change_dir_unwind {
-	popd &>/dev/null
+	popd &>/dev/null || return
 }
 
 function files.change_dir_add_stack {
@@ -86,7 +86,7 @@ function files.list_current_dir_recursive {
 }
 
 function files.move_file {
-	files.rename_file "$*"
+	files.rename_file "$@"
 }
 
 function files.delete_file {
@@ -129,6 +129,7 @@ function files.create_file {
 function files.file_exists {
 	__verify_nr_args "$#" 1 files.file_exists
 	local target result
+	target="$1"
 	if [ -f "$target" ]; then
 		result=1
 	else

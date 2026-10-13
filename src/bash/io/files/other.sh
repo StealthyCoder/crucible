@@ -169,11 +169,11 @@ function files.file_add_other_read_execute_only {
 	files.file_set_perms "$target" "o+rx"
 }
 
-function files.file_add_group_write_execute_only {
-	__verify_nr_args "$#" 1 files.file_add_group_write_execute_only
+function files.file_add_other_write_execute_only {
+	__verify_nr_args "$#" 1 files.file_add_other_write_execute_only
 	local target
 	target="$1"
-	files.file_set_perms "$target" "g+wx"
+	files.file_set_perms "$target" "o+wx"
 }
 
 function files.file_add_other_read_write_execute_only {

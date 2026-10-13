@@ -18,7 +18,7 @@ function dirs.rename_dir {
 }
 
 function dirs.move_dir {
-	dirs.rename_dir "$*"
+	dirs.rename_dir "$@"
 }
 
 function dirs.delete_dir {

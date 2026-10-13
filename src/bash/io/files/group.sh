@@ -12,7 +12,7 @@ function files.file_set_group_read_only_clear {
 	__verify_nr_args "$#" 1 files.file_set_group_read_only_clear
 	local target
 	target="$1"
-	files.file_set_perms "$target" "g=r,ug-rxw"
+	files.file_set_perms "$target" "g=r,uo-rxw"
 }
 
 function files.file_set_group_read_only {
@@ -54,7 +54,7 @@ function files.file_set_group_write_only_clear {
 	__verify_nr_args "$#" 1 files.file_set_group_write_only_clear
 	local target
 	target="$1"
-	files.file_set_perms "$target" "g=w,ug-rxw"
+	files.file_set_perms "$target" "g=w,uo-rxw"
 }
 
 function files.file_set_group_write_only {
@@ -96,7 +96,7 @@ function files.file_set_group_execute_only_clear {
 	__verify_nr_args "$#" 1 files.file_set_group_execute_only_clear
 	local target
 	target="$1"
-	files.file_set_perms "$target" "g=x,ug-rxw"
+	files.file_set_perms "$target" "g=x,uo-rxw"
 }
 
 function files.file_set_group_execute_only {
