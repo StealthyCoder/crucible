@@ -12,10 +12,15 @@ declare -a tests
 
 tests=("sh.build.refuses_another_version" "sh.build.stamps_every_file")
 
-# build.sh changes the files it sits next to, so it works on a copy
+# build.sh changes the files it sits next to, so it works on a copy. The copy
+# gets its placeholders back, so that this also works in a tree that was built
+# for a release and has none.
 function copy_repo {
     mkdir -p copy
     cp -r "$REPO/src" "$REPO/.sh" copy/
+    find copy/src -type f -exec sed -i -E \
+        -e 's/^# CRUCIBLE_VERSION=.*$/# CRUCIBLE_VERSION={CRUCIBLE_VERSION}/' \
+        -e 's/^# CRUCIBLE_CREATED=.*$/# CRUCIBLE_CREATED={CRUCIBLE_CREATED}/' {} +
 }
 
 function sh.build.refuses_another_version {
