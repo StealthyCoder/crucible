@@ -23,3 +23,60 @@ function teardown {
     yes | crucible purge
     echo -e "\\033[0m"
 }
+
+function assert_equals {
+    # usage: assert_equals <expected> <actual> <message>
+    test "$1" = "$2" || fail "$3 (expected: [$1], got: [$2])"
+}
+
+function assert_true {
+    # usage: assert_true <message> <command> [args...]
+    local message
+    message="$1"
+    shift
+    "$@" || fail "$message"
+}
+
+function assert_false {
+    # usage: assert_false <message> <command> [args...]
+    local message
+    message="$1"
+    shift
+    if "$@"; then
+        fail "$message"
+    fi
+}
+
+function wait_for_port {
+    # usage: wait_for_port <tcp|udp> <port>
+    # Waits until something listens on the port without connecting to it, a
+    # connection would be consumed by the one shot servers the tests use.
+    local file state
+    if [ "$1" = "tcp" ]; then
+        file=/proc/net/tcp
+        state="0A"
+    else
+        file=/proc/net/udp
+        state="07"
+    fi
+    for _ in $(seq 1 100); do
+        if grep -qi ":$(printf '%04X' "$2") .* $state " "$file"; then
+            return 0
+        fi
+        sleep 0.1
+    done
+    fail "Nothing started listening on $1 port $2"
+}
+
+function wait_for_content {
+    # usage: wait_for_content <file>
+    # Waits until a server has written something to the file.
+    local _
+    for _ in $(seq 1 100); do
+        if [ -s "$1" ]; then
+            return 0
+        fi
+        sleep 0.1
+    done
+    fail "Nothing was written to $1"
+}
