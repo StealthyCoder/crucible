@@ -8,7 +8,7 @@ function get_uuid {
 
 function generate_uuid {
 	local uuid
-	uuid="$(head -c 1K </dev/urandom | sha256sum -bz | cut -d' ' -f1 | tr -dc '[:print:]')"
+	uuid="$(head -c 1K </dev/urandom | sha256sum -b | cut -d' ' -f1 | tr -dc '[:print:]')"
 	echo "$uuid"
 }
 
