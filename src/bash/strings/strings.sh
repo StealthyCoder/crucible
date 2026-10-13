@@ -66,7 +66,7 @@ function strings.contains_string_sensitive {
 
 function strings.contains_string_ignore_case {
 	__verify_nr_args "$#" 2 strings.contains_string_ignore_case
-	strings.contains_string_sensitive "$(strings.to_lowercase "$1")" "$(strings.to_lowercase "$1")"
+	strings.contains_string_sensitive "$(strings.to_lowercase "$1")" "$(strings.to_lowercase "$2")"
 }
 
 function strings.substring {
@@ -159,7 +159,9 @@ function strings.join {
 		}
 		arrays.foreach "$1" strings.join._joiner
 		l="$(strings.length "$result")"
-		result="$(strings.slice "$result" 0 $((l - 1)))"
+		if [ "$l" -gt 0 ]; then
+			result="$(strings.slice "$result" 0 $((l - $(strings.length "$char"))))"
+		fi
 		unset -f strings.join._joiner
 		echo "$result"
 	fi
