@@ -15,7 +15,7 @@ function crypto.hash.md5sum {
 	target="$1"
 	_hash=""
 	if __command_exists "md5sum"; then
-		_hash="$(md5sum $target)"
+		_hash="$(md5sum "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -44,7 +44,7 @@ function crypto.hash.binary_md5sum {
 	target="$1"
 	_hash=""
 	if __command_exists "md5sum"; then
-		_hash="$(md5sum -b $target)"
+		_hash="$(md5sum -b "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -59,7 +59,7 @@ function crypto.hash.binary_md5sum_check {
 	checksum_file="$1"
 	result=1
 	if __command_exists "md5sum"; then
-		md5sum -b --check "$checksum_file" --quiet --status 2>/dev/null
+		md5sum --check "$checksum_file" --quiet --status 2>/dev/null
 		result=$?
 	else
 		logging.warning "[md5sum] command not available, cannot use $checksum_file to determine checksums"

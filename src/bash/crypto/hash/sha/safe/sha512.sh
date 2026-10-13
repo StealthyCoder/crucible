@@ -13,7 +13,7 @@ function crypto.hash.sha512sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -60,7 +60,7 @@ function crypto.hash.binary_sha512sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -109,7 +109,7 @@ function crypto.hash.sha512_224sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512224 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512224 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -156,7 +156,7 @@ function crypto.hash.binary_sha512_224sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512224 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512224 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -205,7 +205,7 @@ function crypto.hash.sha512_256sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512256 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512256 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -252,7 +252,7 @@ function crypto.hash.binary_sha512_256sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 512256 --UNIVERSAL $target)"
+		_hash="$(shasum -a 512256 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else

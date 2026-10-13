@@ -14,7 +14,7 @@ function crypto.hash.sha256sum {
 	target="$1"
 	_hash=""
 	if __command_exists "shasum"; then
-		_hash="$(shasum -a 256 --UNIVERSAL $target)"
+		_hash="$(shasum -a 256 --UNIVERSAL "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else

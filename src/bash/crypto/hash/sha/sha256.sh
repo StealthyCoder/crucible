@@ -15,7 +15,7 @@ function crypto.hash.sha256sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha256sum"; then
-		_hash="$(sha256sum $target)"
+		_hash="$(sha256sum "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -59,7 +59,7 @@ function crypto.hash.binary_sha256sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha256sum"; then
-		_hash="$(sha256sum -b $target)"
+		_hash="$(sha256sum -b "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -89,7 +89,7 @@ function crypto.hash.binary_sha256sum_check {
 	checksum_file="$1"
 	result=1
 	if __command_exists "sha256sum"; then
-		sha256sum -b --check "$checksum_file" --quiet --status 2>/dev/null
+		sha256sum --check "$checksum_file" --quiet --status 2>/dev/null
 		result=$?
 	else
 		logging.warning "[sha256sum] command not available, cannot use $checksum_file to determine checksums"

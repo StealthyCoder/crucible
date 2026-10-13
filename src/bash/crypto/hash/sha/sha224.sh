@@ -15,7 +15,7 @@ function crypto.hash.sha224sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha224sum"; then
-		_hash="$(sha224sum $target)"
+		_hash="$(sha224sum "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -59,7 +59,7 @@ function crypto.hash.binary_sha224sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha224sum"; then
-		_hash="$(sha224sum -b $target)"
+		_hash="$(sha224sum -b "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -89,7 +89,7 @@ function crypto.hash.binary_sha224sum_check {
 	checksum_file="$1"
 	result=1
 	if __command_exists "sha224sum"; then
-		sha224sum -b --check "$checksum_file" --quiet --status 2>/dev/null
+		sha224sum --check "$checksum_file" --quiet --status 2>/dev/null
 		result=$?
 	else
 		logging.warning "[sha224sum] command not available, cannot use $checksum_file to determine checksums"

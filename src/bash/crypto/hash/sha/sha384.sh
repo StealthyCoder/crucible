@@ -15,7 +15,7 @@ function crypto.hash.sha384sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha384sum"; then
-		_hash="$(sha384sum $target)"
+		_hash="$(sha384sum "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -59,7 +59,7 @@ function crypto.hash.binary_sha384sum {
 	target="$1"
 	_hash=""
 	if __command_exists "sha384sum"; then
-		_hash="$(sha384sum -b $target)"
+		_hash="$(sha384sum -b "$target")"
 		pos="$(strings.lindex "$_hash" " ")"
 		_hash="$(strings.slice "$_hash" 0 $pos)"
 	else
@@ -89,7 +89,7 @@ function crypto.hash.binary_sha384sum_check {
 	checksum_file="$1"
 	result=1
 	if __command_exists "sha384sum"; then
-		sha384sum -b --check "$checksum_file" --quiet --status 2>/dev/null
+		sha384sum --check "$checksum_file" --quiet --status 2>/dev/null
 		result=$?
 	else
 		logging.warning "[sha384sum] command not available, cannot use $checksum_file to determine checksums"
