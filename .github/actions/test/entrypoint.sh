@@ -2,11 +2,13 @@
 export PATH=$PATH:$PWD/src/$1/bin
 env | sort
 
-for f in $(ls test/$1/**/*)
-do
-  if [ -f $f ]; 
-  then 
-    $1 $f
-  fi
-done
-
+# Runs every test, also in subdirectories, and fails when any of them fails
+status=0
+while IFS= read -r f; do
+  echo "=== $f"
+  timeout 300 "$1" "$f" || {
+    echo "FAILED: $f"
+    status=1
+  }
+done < <(find "test/$1" -type f | sort)
+exit "$status"

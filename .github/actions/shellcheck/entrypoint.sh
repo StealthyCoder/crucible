@@ -1,23 +1,10 @@
 #!/usr/bin/env bash
 
-shopt -s dotglob
-for f in $(ls src/$1/**/*)
-do
-  if [ -f $f ]; 
-  then 
-    shellcheck $f -x -s $1; 
-  fi
+# Checks every script, also in subdirectories, and fails when any has a finding
+shopt -s globstar dotglob
+status=0
+for f in src/"$1"/**/* test/"$1"/**/* test/.utils .sh/*.sh; do
+  [ -f "$f" ] || continue
+  shellcheck -x -s "$1" --severity=warning "$f" || status=1
 done
-
-for f in $(ls test/$1/**/*)
-do
-  if [ -f $f ]; 
-  then 
-    shellcheck $f -x -s $1; 
-  fi
-done
-
-shellcheck test/.utils -s $1
-
-shellcheck .sh/*.sh -s $1
-
+exit "$status"
