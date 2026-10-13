@@ -176,6 +176,11 @@ The blog post planned for `alice.name=Ada`. That cannot exist in bash: with a do
 - [x] [File Cache](https://stealthycoder.writeas.com/crucible-the-future)
 - [x] [Memory Cache](https://stealthycoder.writeas.com/crucible-the-future)
 
+## Next
+
+- [ ] [Web framework](https://stealthycoder.writeas.com/crucible-the-future): a live bash process that takes requests on a Unix domain socket and runs controllers by route, built on `processes`, `io`, `http` and `class`. The open question is listening: bash can connect to sockets (`/dev/tcp`, `/dev/udp`) but has no builtin to accept connections on one, so this needs a design decision first (a named pipe, the `accept` loadable builtin that ships with the bash sources, or something else) and a look at what that does to the "bash is the only dependency" rule.
+- [ ] `io/binary` without `strings` and `xxd`/`hexdump`: `binary.extract_strings` and `binary.hexdump` are the last functions in the module that call a system tool. The reader that identifies files (`__read_bytes_hex`) is what to build on, as it did for `file`.
+
 # Static Code Analysis
 
 The tool [ShellCheck](https://github.com/koalaman/shellcheck) has been used to perform static code analysis on all scripts, [shfmt](https://github.com/mvdan/sh) checks the formatting of `src`, and the tests run in CI. A warning, a badly formatted file or a failing test fails the build.
