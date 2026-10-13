@@ -53,13 +53,21 @@ function network.tcp.receive {
 	printf '%s\n' "$response"
 }
 
-# Reads exactly <COUNT> bytes and prints them as hexadecimal digits, NUL bytes included.
+# Reads exactly <COUNT> bytes and prints them as hexadecimal digits, NUL bytes
+# included. What the other side sent beyond that is kept for the next call, so
+# a message with its length in front can be read in two steps. Call it
+# directly, not inside $(...): the subshell would lose what was kept.
+# Fails, and prints what did arrive, when the connection ends or stays silent too long.
 function network.tcp.receive_hex {
 	if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
 		logging.error "network.tcp.receive_hex: usage is network.tcp.receive_hex <FD> <COUNT> [TIMEOUT]"
 		exit 1
 	fi
+	local status
 	__read_bytes_hex "$1" "$2" "${3:-${CRUCIBLE_NETWORK_TIMEOUT:-0}}"
+	status=$?
+	printf '%s\n' "$__READ_HEX"
+	return "$status"
 }
 
 # Sends bytes that are given as hexadecimal digits, for example 0A1B

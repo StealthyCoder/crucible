@@ -13,7 +13,9 @@ require strings/strings
 function crypto.uuid.uuidv4 {
 	local uuid fd hex variant
 	exec {fd}</dev/urandom
-	hex="$(__read_bytes_hex "$fd" 16)"
+	__read_bytes_hex "$fd" 16
+	hex="$__READ_HEX"
+	__forget_read_buffer "$fd"
 	exec {fd}<&-
 	if [ "${#hex}" -ne 32 ]; then
 		logging.error "Could not read random bytes from /dev/urandom"

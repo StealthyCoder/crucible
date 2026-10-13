@@ -15,7 +15,7 @@ tests=("io.network.verify_host" "io.network.verify_port")
 tests+=("io.network.tcp.connect_send_receive" "io.network.tcp.inline")
 tests+=("io.network.tcp.refused" "io.network.tcp.invalid_arguments")
 tests+=("io.network.tcp.receive_timeout" "io.network.tcp.close")
-tests+=("io.network.tcp.binary")
+tests+=("io.network.tcp.binary" "io.network.tcp.read_in_steps")
 tests+=("io.network.udp.connect_send_receive" "io.network.udp.inline")
 tests+=("io.network.udp.send_hex" "io.network.udp.receive_timeout")
 tests+=("io.network.udp.invalid_arguments")
@@ -167,6 +167,47 @@ function io.network.tcp.binary {
     network.tcp.close "$CRUCIBLE_NETWORK_FD"
     wait
     assert_equals "$(echo "$want" | tr 'A-F' 'a-f')" "$(xxd -p tcp-request.txt | tr -d '\n')" "request"
+    success
+}
+
+function io.network.tcp.read_in_steps {
+    intro "io.network.tcp.receive_hex: what was not asked for yet is kept"
+    local first second rest
+    # A length of 5, then the message, with NUL bytes right where the reads end
+    serve_tcp 18207 '\x00\x05\x12\x00\x34\x00\x56' tcp-request.txt
+    network.tcp 127.0.0.1 18207
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 2 5 >step-one.txt
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 3 5 >step-two.txt
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 2 5 >step-three.txt
+    first="$(cat step-one.txt)"
+    second="$(cat step-two.txt)"
+    rest="$(cat step-three.txt)"
+    assert_equals "0005" "$first" "the length"
+    assert_equals "120034" "$second" "the first three bytes of the message"
+    assert_equals "0056" "$rest" "the end of the message"
+    network.tcp.close "$CRUCIBLE_NETWORK_FD"
+    wait
+    # Asking for more than comes fails and says what did come
+    serve_tcp 18208 '\x01\x02' tcp-request.txt
+    network.tcp 127.0.0.1 18208
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 5 2 >step-one.txt
+    test $? -ne 0 || fail "Reading more than the server sends should fail"
+    assert_equals "0102" "$(cat step-one.txt)" "what did arrive"
+    network.tcp.close "$CRUCIBLE_NETWORK_FD"
+    wait
+    # The leftovers of one connection are not for the next one that gets the same descriptor
+    serve_tcp 18209 '\x00\x00\x00\x00' tcp-request.txt
+    network.tcp 127.0.0.1 18209
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 1 5 >step-one.txt
+    network.tcp.close "$CRUCIBLE_NETWORK_FD"
+    wait
+    serve_tcp 18210 '\xAA\xBB' tcp-request.txt
+    network.tcp 127.0.0.1 18210
+    network.tcp.receive_hex "$CRUCIBLE_NETWORK_FD" 2 5 >step-one.txt
+    assert_equals "AABB" "$(cat step-one.txt)" "a new connection starts with an empty buffer"
+    network.tcp.close "$CRUCIBLE_NETWORK_FD"
+    wait
+    rm step-one.txt step-two.txt step-three.txt
     success
 }
 

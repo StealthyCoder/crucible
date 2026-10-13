@@ -65,6 +65,7 @@ function network._connect {
 		logging.error "Could not connect to $_connect_host:$_connect_port over $_connect_protocol"
 		return 1
 	fi
+	__forget_read_buffer "$_connect_fd"
 	printf -v "$_connect_variable" '%s' "$_connect_fd"
 }
 
@@ -94,6 +95,7 @@ function network._close {
 		logging.error "Invalid file descriptor: $fd"
 		exit 1
 	fi
+	__forget_read_buffer "$fd"
 	eval "exec $fd>&-"
 	if [ "${CRUCIBLE_NETWORK_FD:-}" = "$fd" ]; then
 		unset CRUCIBLE_NETWORK_FD
