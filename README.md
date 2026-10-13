@@ -15,7 +15,7 @@ That has consequences, and they are stated in the module they belong to:
 - Bash cannot hold a NUL byte in a variable, so text is text. Binary data is read byte exact from a TCP stream (DNS needs it) and not at all from UDP.
 - Bash cannot rename a file or take a lock, so the file cache is not atomic.
 
-Some modules exist to wrap a system tool: `files` and `dirs` call `mv`, `chmod` and `chown`, `crypto` calls `sha256sum`, `md5sum` and `shasum`, `io/binary` calls `file` and `strings`. Those are the modules that need that tool, and they say so when it is missing. While you develop, `require` downloads modules with `wget`; a poured script does not.
+Some modules exist to wrap a system tool: `files` and `dirs` call `mv`, `chmod` and `chown`, `crypto` calls `sha256sum`, `md5sum` and `shasum`, `io/binary` calls `strings` and `xxd` to list the contents of a binary. What a file is (`binary.is_png`, `binary.get_file_type`, `binary.is_executable` and the rest) bash finds out itself, from the first bytes of the file. Those are the modules that need that tool, and they say so when it is missing. While you develop, `require` downloads modules with `wget`; a poured script does not.
 
 # How to use
 

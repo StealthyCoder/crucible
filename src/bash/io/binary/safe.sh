@@ -13,12 +13,11 @@ function binary.read_file {
 	__verify_nr_args "$#" 1 binary.read_file
 	local target
 	target="$1"
-	if [ -f "$target" ]; then
-		if __command_exists "file"; then
-			if binary.is_printable "$target"; then
-				cat "$target"
-			fi
-		fi
+	local content
+	if [ -f "$target" ] && binary.is_printable "$target"; then
+		# read reports the end of the file, the text is in content all the same
+		IFS= read -r -d '' content <"$target"
+		printf '%s' "$content"
 	fi
 }
 
