@@ -54,13 +54,12 @@ function binary.is_text {
 	__verify_nr_args "$#" 1 binary.is_text
 	local target result
 	target="$1"
-	result=1
+	result=0
 	if __command_exists "file"; then
-		if [[ ! "$(file "$1" 2>/dev/null)" =~ .+text$ ]]; then
-			result=0
-		fi
-		if [[ ! "$(file "$1" 2>/dev/null)" =~ .+text.+ ]]; then
-			result=0
+		if [[ "$(file "$1" 2>/dev/null)" =~ .+text$ ]]; then
+			result=1
+		elif [[ "$(file "$1" 2>/dev/null)" =~ .+text.+ ]]; then
+			result=1
 		fi
 	else
 		logging.warning "[file] command does not exist, cannot determine if $1 is text"
@@ -261,7 +260,7 @@ function binary.random_bytes {
 	__verify_nr_args "$#" 1 binary.random_bytes
 	local size content
 	size="$1"
-	content="$(head -c $size </dev/urandom)"
+	content="$(head -c "$size" </dev/urandom | tr -d '\0')"
 	echo "$content"
 }
 

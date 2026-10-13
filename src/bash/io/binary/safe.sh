@@ -58,7 +58,7 @@ function binary.random_bytes {
 		if [ "$(strings.replace_char_with $size 'K' '')" -gt 10240 ]; then
 			logging.warning "$size is too large, has to be fewer than or equal to 10240 for both bytes and Kibibytes"
 		else
-			content="$(head -c $size </dev/urandom)"
+			content="$(head -c "$size" </dev/urandom | tr -d '\0')"
 		fi
 	else
 		logging.warning "$size is too large, has to be in bytes (no suffix) or Kibibyte (K) range"
