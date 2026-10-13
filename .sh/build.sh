@@ -35,15 +35,18 @@ function fix_location {
 }
 
 function fix_versions {
+    local created f
+    created="$(date +%s)"
     for shell in "${shells[@]}"
     do
-        shopt -s dotglob
+        # globstar, or ** only goes one directory deep and the modules below that keep their placeholders
+        shopt -s globstar dotglob
         for f in ../src/"$shell"/**/*
         do
-            sed -i -e "s/{CRUCIBLE_VERSION}/$NEW_VERSION/" "$f"
-            sed -i -e "s/{CRUCIBLE_CREATED}/$(date +%s)/" "$f"
+            [ -f "$f" ] || continue
+            sed -i -e "s/{CRUCIBLE_VERSION}/$NEW_VERSION/" -e "s/{CRUCIBLE_CREATED}/$created/" "$f"
         done
-        shopt -u dotglob
+        shopt -u globstar dotglob
     done
 }
 

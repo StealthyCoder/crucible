@@ -32,6 +32,7 @@ services:
     volumes:
       - ./test:/srv/test:ro
       - ./src:/srv/src:ro
+      - ./.sh:/srv/.sh:ro
     environment:
       CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
   shfmt:
