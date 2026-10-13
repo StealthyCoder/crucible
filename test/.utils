@@ -80,3 +80,11 @@ function wait_for_content {
     done
     fail "Nothing was written to $1"
 }
+
+function quietly {
+    # usage: quietly <command> [args...]
+    # Runs the command without its output. Put it after assert_true or
+    # assert_false: a redirect on the assertion itself would hide the message
+    # of a failing assertion as well.
+    "$@" >/dev/null 2>&1
+}

@@ -182,11 +182,11 @@ function processes.processes.run_with_timeout {
 
 function processes.processes.invalid_arguments {
     intro "invalid arguments"
-    assert_false "pid must be a number" processes.is_running "abc" >/dev/null
-    assert_false "pid must be a number" processes.signal "1; rm" TERM >/dev/null
-    assert_false "signal must be a signal" processes.signal $$ "TERM; echo" >/dev/null
-    assert_false "sleep needs a number" processes.sleep "soon" >/dev/null
-    assert_false "spawn needs a command" processes.spawn >/dev/null
+    assert_false "pid must be a number" quietly processes.is_running "abc"
+    assert_false "pid must be a number" quietly processes.signal "1; rm" TERM
+    assert_false "signal must be a signal" quietly processes.signal $$ "TERM; echo"
+    assert_false "sleep needs a number" quietly processes.sleep "soon"
+    assert_false "spawn needs a command" quietly processes.spawn
     success
 }
 
