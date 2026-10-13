@@ -30,9 +30,8 @@ services:
       dockerfile: Dockerfile.test
     image: crucible/bash_test:1.0
     volumes:
-      - ./test:/srv/test
-      - ./src:/srv/src
-      - ./src/bash/bin/crucible:/bin/crucible
+      - ./test:/srv/test:ro
+      - ./src:/srv/src:ro
     environment:
       CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
   shfmt:
