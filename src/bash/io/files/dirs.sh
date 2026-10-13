@@ -6,7 +6,7 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
-require io/files/dirs/users
+require io/files/dirs/user
 require io/files/dirs/group
 require io/files/dirs/other
 

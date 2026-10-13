@@ -6,5 +6,5 @@
 ### CRUCIBLE META DATA ###
 
 require core/.internal
-require io/files/user
+require io/files/users
 require io/files/safe

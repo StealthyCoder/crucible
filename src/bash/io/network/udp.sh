@@ -10,7 +10,7 @@ require io/network/.internal
 require logging/logging
 require arrays/arrays
 require maps/maps
-require string/strings
+require strings/strings
 
 function network.udp.send {
 	__verify_nr_args "$#" 2 network.udp_send
