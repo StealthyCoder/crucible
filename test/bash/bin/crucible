@@ -94,7 +94,7 @@ MAIN
     # Outside the project, without crucible and without anything in the environment: only bash
     assert_equals "cache: value with spaces
 strings: HELLO
-class: from a class" "$(cd "$poured" && env -i PATH=/usr/bin:/bin /usr/bin/bash "./$main_file" 2>&1)" "output of the poured script"
+class: from a class" "$(cd "$poured" && env -i PATH=/usr/bin:/bin "$(command -v bash)" "./$main_file" 2>&1)" "output of the poured script"
     rm -r "$poured"
 }
 
