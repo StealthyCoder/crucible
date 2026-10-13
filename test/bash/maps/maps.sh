@@ -150,11 +150,12 @@ function maps.maps.values {
     maps.transform_into_map a
     
     maps.put_all a k v a 1
-    b="$(maps.values a)"
+    # The order of an associative array is not the same in every version of bash
+    b="$(maps.values a | tr ' ' '\n' | sort | tr '\n' ' ')"
 
     test $? -eq 0 || fail "Could not get from array"
     
-    test "$b" = "v 1" || fail "Did not get correct element"
+    test "$b" = "1 v " || fail "Did not get correct element"
 
     success
 }
@@ -165,11 +166,12 @@ function maps.maps.keys {
     maps.transform_into_map a
     
     maps.put_all a k v a 1
-    b="$(maps.keys a)"
+    # The order of an associative array is not the same in every version of bash
+    b="$(maps.keys a | tr ' ' '\n' | sort | tr '\n' ' ')"
 
     test $? -eq 0 || fail "Could not get from array"
     
-    test "$b" = "k a" || fail "Did not get correct element"
+    test "$b" = "a k " || fail "Did not get correct element"
 
     success
 }
@@ -181,13 +183,14 @@ function maps.maps.entries {
     maps.transform_into_map a
     
     maps.put_all a k v a 1
-    b="$(maps.entries a)"
+    # The order of an associative array is not the same in every version of bash
+    b="$(maps.entries a | sort)"
     
     test $? -eq 0 || fail "Could not get from array"
     
     b="$(echo "$b" | tr -d "[:cntrl:]")"
     
-    test "$b" = "k,va,1" || fail "Did not get correct element"
+    test "$b" = "a,1k,v" || fail "Did not get correct element"
 
     success
 }
@@ -260,7 +263,8 @@ function maps.maps.map {
 
     maps.map a add_k_v
 
-    b="$(maps.entries a)"
+    # The order of an associative array is not the same in every version of bash
+    b="$(maps.entries a | sort)"
 
     test $? -eq 0 || fail "Could not get from array"
     
