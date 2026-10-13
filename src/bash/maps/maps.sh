@@ -108,7 +108,7 @@ function maps.remove {
 			print="$(declare -p "$1" | sed -e "s/declare -Ax $1=/declare -A arr=/")"
 		fi
 		eval "$print"
-		unset arr["$2"]
+		unset "arr[$2]"
 		print="$(declare -p arr | sed -e "s/declare -A arr=/declare -Agx $1=/")"
 		eval "$print"
 	fi

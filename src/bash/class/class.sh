@@ -60,10 +60,12 @@ function class.invoke_method {
 		arrays.transform_into_array method_args
 		class_name=$(arrays.get args 0)
 		method_name=$(arrays.get args 1)
+		# shellcheck disable=SC2154
 		for ((i = 1; i < ${#args[@]}; i++)); do
-			arrays.add method_args $(arrays.get args "$i")
+			arrays.add method_args "$(arrays.get args "$i")"
 		done
 		unset args
+		# shellcheck disable=SC2154
 		logging.info "Execute method name: ${method_name} with method_args: ${method_args[*]}"
 		unset method_args
 		;;
