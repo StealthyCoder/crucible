@@ -1,5 +1,4 @@
-version: '3.6'
-
+version: "3.6"
 services:
   shellcheck:
     container_name: shellcheck
@@ -11,7 +10,6 @@ services:
       - ./src/:/srv/crucible
       - ./test/:/srv/crucible-test
       - ./.sh:/srv/.sh
-  
   crucible:
     container_name: crucible
     build:
@@ -23,9 +21,8 @@ services:
       - ./src/bash/bin/crucible:/bin/crucible
       - ./.sh:/srv/.sh
     environment:
-        CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
-        CRUCIBLE_LOGGING_LEVEL: WARNING
-    
+      CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
+      CRUCIBLE_LOGGING_LEVEL: WARNING
   crucible-test:
     container_name: crucible_test
     build:
@@ -33,8 +30,19 @@ services:
       dockerfile: Dockerfile.test
     image: crucible/bash_test:1.0
     volumes:
-      - ./test:/srv/test
-      - ./src:/srv/src
-      - ./src/bash/bin/crucible:/bin/crucible
+      - ./test:/srv/test:ro
+      - ./src:/srv/src:ro
+      - ./.sh:/srv/.sh:ro
     environment:
       CRUCIBLE_LOCATION: ${CRUCIBLE_LOCATION:-develop}
+  shfmt:
+    container_name: shfmt
+    build:
+      context: docker/shfmt
+      dockerfile: Dockerfile
+    image: crucible/shfmt:1.0
+    user: ${DOCKER_UID:-1000}
+    volumes:
+      - ./test:/srv/test
+      - ./src:/srv/src
+

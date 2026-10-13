@@ -4,9 +4,14 @@ inputs:
   which-shell:  # id of input
     description: 'Which shell to test'
     required: true
+  crucible_location:
+    description: 'Name of the current branch'
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  env:
+    CRUCIBLE_LOCATION: ${{ inputs.crucible_location }}
   args:
     - ${{ inputs.which-shell }}
 

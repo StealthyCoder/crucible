@@ -1,8 +1,7 @@
 on: [push]
-
 jobs:
   integrity-checks:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # This step checks out a copy of your repository.
       - name: Checkout
@@ -13,5 +12,10 @@ jobs:
           which-shell: bash
       - name: Test BASH
         uses: ./.github/actions/test
+        with:
+          which-shell: bash
+          crucible_location: ${{ github.ref_name }}
+      - name: shfmt BASH
+        uses: ./.github/actions/shfmt
         with:
           which-shell: bash
