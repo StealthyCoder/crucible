@@ -183,18 +183,16 @@ function __ask {
 # the stream is read in pieces that end at a NUL; every piece that was ended by
 # a NUL is followed by 00, which keeps the result byte exact.
 #
-# A piece can be longer than what was asked for. What is not asked for yet is
-# kept per file descriptor in __READ_BUFFERS, and the next call starts with it,
-# so a protocol with a length in front (two bytes, then the message) works.
-# That is also why the result is in a variable and not on stdout: a subshell
-# would lose the buffer. Call __forget_read_buffer when the descriptor is closed.
+# A read never asks for more than what is left to read (read -n), so nothing is
+# taken from the stream beyond <count> bytes. That makes it safe for a protocol
+# with a length in front (two bytes, then the message) and for a file: the first
+# bytes of a large one are read and not the whole of it.
 # Usage: __read_bytes_hex <fd> <count> [timeout in seconds, 0 is none]
 # Fails, with what did arrive in __READ_HEX, when the stream ends or the timeout passes.
-declare -gA __READ_BUFFERS
 declare -g __READ_HEX
 function __read_bytes_hex {
 	local LC_ALL=C
-	local fd count timeout_seconds out piece status i char
+	local fd count timeout_seconds out have piece status i char
 	local -a timeout_args
 	fd="$1"
 	count="$2"
@@ -203,25 +201,25 @@ function __read_bytes_hex {
 	if [[ "$timeout_seconds" != "0" ]]; then
 		timeout_args=(-t "$timeout_seconds")
 	fi
-	out="${__READ_BUFFERS[$fd]:-}"
-	while [ "${#out}" -lt $((count * 2)) ]; do
-		IFS= read -r -d '' "${timeout_args[@]}" -u "$fd" piece
+	out=""
+	have=0
+	while [ "$have" -lt "$count" ]; do
+		IFS= read -r -d '' -n $((count - have)) "${timeout_args[@]}" -u "$fd" piece
 		status=$?
 		for ((i = 0; i < ${#piece}; i++)); do
 			printf -v char '%02X' "'${piece:i:1}"
 			out+="$char"
 		done
-		if [ "$status" -eq 0 ]; then
-			out+="00"
-		else
+		have=$((have + ${#piece}))
+		if [ "$status" -ne 0 ]; then
 			break
 		fi
+		# Reading stopped at a NUL, unless the piece was as long as was asked for
+		if [ "$have" -lt "$count" ]; then
+			out+="00"
+			have=$((have + 1))
+		fi
 	done
-	__READ_HEX="${out:0:count*2}"
-	__READ_BUFFERS[$fd]="${out:count*2}"
-	[ "${#__READ_HEX}" -ge $((count * 2)) ]
-}
-
-function __forget_read_buffer {
-	unset '__READ_BUFFERS[$1]'
+	__READ_HEX="$out"
+	[ "$have" -ge "$count" ]
 }

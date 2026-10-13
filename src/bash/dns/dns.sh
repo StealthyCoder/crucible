@@ -113,7 +113,6 @@ function dns.build_query {
 		exec {random}</dev/urandom
 		__read_bytes_hex "$random" 2
 		hex_id="$__READ_HEX"
-		__forget_read_buffer "$random"
 		exec {random}<&-
 		if [ "${#hex_id}" -eq 4 ]; then
 			id=$((16#$hex_id))

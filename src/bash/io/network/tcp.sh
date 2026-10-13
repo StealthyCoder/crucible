@@ -54,9 +54,8 @@ function network.tcp.receive {
 }
 
 # Reads exactly <COUNT> bytes and prints them as hexadecimal digits, NUL bytes
-# included. What the other side sent beyond that is kept for the next call, so
-# a message with its length in front can be read in two steps. Call it
-# directly, not inside $(...): the subshell would lose what was kept.
+# included. Nothing beyond that is taken from the connection, so a message with
+# its length in front can be read in two steps.
 # Fails, and prints what did arrive, when the connection ends or stays silent too long.
 function network.tcp.receive_hex {
 	if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then

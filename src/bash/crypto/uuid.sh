@@ -15,7 +15,6 @@ function crypto.uuid.uuidv4 {
 	exec {fd}</dev/urandom
 	__read_bytes_hex "$fd" 16
 	hex="$__READ_HEX"
-	__forget_read_buffer "$fd"
 	exec {fd}<&-
 	if [ "${#hex}" -ne 32 ]; then
 		logging.error "Could not read random bytes from /dev/urandom"
