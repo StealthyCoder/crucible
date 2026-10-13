@@ -4,7 +4,7 @@ source "$(dirname "$0")/../../.utils"
 
 declare -a tests
 
-tests=("crucible.init" "crucible.update" "crucible.purge")
+tests=("crucible.init" "crucible.update" "crucible.pour" "crucible.purge")
 
 
 function crucible.init.setup {
@@ -61,6 +61,43 @@ function crucible.update.verify {
     cp /tmp/crucible_restore "$(command -v crucible)"
 }
 
+function crucible.pour.verify {
+    intro "crucible.pour.verify"
+    local main_file poured
+    main_file="$(grep '^main_file=' .crucible | cut -d'=' -f2-)"
+    # The project never ran, so nothing was fetched yet: pour has to do that
+    cat >>"$main_file" <<'MAIN'
+require strings/strings
+require cache/memory
+require class/class
+
+CRUCIBLE_CACHE_NOW=1000
+cache.memory.create demo
+cache.memory.put demo key "value with spaces"
+echo "cache: $(cache.memory.get demo key)"
+echo "strings: $(strings.to_uppercase hello)"
+class.define Thing
+class.define_property Thing label
+class.new Thing t1
+t1.label "from a class"
+echo "class: $(t1.label)"
+MAIN
+    crucible pour || fail "crucible pour failed"
+    test -f "dist/$(grep '^project_name=' .crucible | cut -d'=' -f2-).tar.gz" || fail "No tarball in dist"
+    poured="$(mktemp -d)"
+    tar xzf dist/*.tar.gz -C "$poured"
+    test -s "$poured/.lib" || fail "The library is empty"
+    grep -q 'function cache.memory.put' "$poured/.lib" || fail "A required module is missing from the library"
+    grep -q 'function strings.to_uppercase' "$poured/.lib" || fail "A required module is missing from the library"
+    grep -q 'function class.new' "$poured/.lib" || fail "A required module is missing from the library"
+    test -z "$(grep -l 'source .mould' "$poured/$main_file")" || fail "The poured script still sources .mould"
+    # Outside the project, without crucible and without anything in the environment: only bash
+    assert_equals "cache: value with spaces
+strings: HELLO
+class: from a class" "$(cd "$poured" && env -i PATH=/usr/bin:/bin /usr/bin/bash "./$main_file" 2>&1)" "output of the poured script"
+    rm -r "$poured"
+}
+
 function crucible.purge.verify {
     intro "crucible.purge.verify"
     local shared_dir
@@ -81,6 +118,12 @@ function crucible.init {
 function crucible.update {
     echo "Testing crucible update"
     crucible.update.verify
+    success
+}
+
+function crucible.pour {
+    echo "Testing crucible pour"
+    crucible.pour.verify
     success
 }
 
