@@ -177,3 +177,45 @@ function __ask {
 	read -r -p "$1" var
 	echo "$var"
 }
+
+# Reads bytes from a stream and prints them as upper case hexadecimal digits,
+# using nothing but bash. Bash variables cannot hold a NUL byte, so the stream
+# is read in pieces that end at a NUL; every piece that was ended by a NUL is
+# followed by 00, which keeps the result byte exact.
+# Usage: __read_bytes_hex <fd> <count> [timeout in seconds, 0 is none]
+# Stops early, and fails, when the stream ends or the timeout passes. It may
+# read a few bytes past <count> when no NUL follows, so only use it on streams
+# where the sender stops after the data, like a DNS answer or /dev/urandom.
+function __read_bytes_hex {
+	local LC_ALL=C
+	local fd count timeout_seconds have out piece status i char
+	local -a timeout_args
+	fd="$1"
+	count="$2"
+	timeout_seconds="${3:-0}"
+	have=0
+	out=""
+	timeout_args=()
+	if [[ "$timeout_seconds" != "0" ]]; then
+		timeout_args=(-t "$timeout_seconds")
+	fi
+	while [ "$have" -lt "$count" ]; do
+		IFS= read -r -d '' "${timeout_args[@]}" -u "$fd" piece
+		status=$?
+		for ((i = 0; i < ${#piece} && have < count; i++)); do
+			printf -v char '%02X' "'${piece:i:1}"
+			out+="$char"
+			have=$((have + 1))
+		done
+		if [ "$status" -eq 0 ]; then
+			if [ "$have" -lt "$count" ]; then
+				out+="00"
+				have=$((have + 1))
+			fi
+		else
+			break
+		fi
+	done
+	printf '%s' "$out"
+	[ "$have" -ge "$count" ]
+}
